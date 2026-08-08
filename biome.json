@@ -25,10 +25,10 @@
   },
   "javascript": {
     "formatter": {
-      "quoteStyle": "double",
-      "jsxQuoteStyle": "double",
+      "quoteStyle": "single",
+      "jsxQuoteStyle": "single",
       "semicolons": "always",
-      "trailingCommas": "all",
+      "trailingCommas": "none",
       "arrowParentheses": "always"
     }
   },
@@ -82,6 +82,9 @@
         "rules": {
           "correctness": {
             "noNodejsModules": "off"
+          },
+          "a11y": {
+            "noSvgWithoutTitle": "off"
           }
         }
       }

@@ -4,18 +4,12 @@
     "strict": true,
     "noUncheckedIndexedAccess": true,
     "paths": {
-      "@/*": [
-        "./src/*"
-      ]
+      "@/*": ["./src/*"],
+      "@data/*": ["./src/data/*"],
+      "@presentation/*": ["./src/presentation/*"],
+      "@shared/*": ["./src/shared/*"]
     }
   },
-  "include": [
-    "**/*.ts",
-    "**/*.tsx",
-    "global.d.ts",
-    "nativewind-env.d.ts"
-  ],
-  "exclude": [
-    "node_modules"
-  ]
+  "include": ["**/*.ts", "**/*.tsx", "global.d.ts", "nativewind-env.d.ts"],
+  "exclude": ["node_modules"]
 }
