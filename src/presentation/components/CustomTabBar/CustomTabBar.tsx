@@ -71,7 +71,7 @@ export function CustomTabBar({
             onLongPress={onLongPress}
             className='flex-1 items-center justify-center pt-3'
           >
-            {Icon && <Icon size={22} color={isFocused ? '#DC1637' : '#7A7A80'} />}
+            {Icon && <Icon size={22} color={isFocused ? '#2CBA80' : '#7A7A80'} />}
 
             <AppText
               className={cn(

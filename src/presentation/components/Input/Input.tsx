@@ -51,7 +51,7 @@ export function Input({
   const { isFocused, handleBlur, handleFocus } = useInputController();
 
   return (
-    <View>
+    <View className='gap-1'>
       {label && <AppText size='sm'>{label}</AppText>}
 
       <InputComponent

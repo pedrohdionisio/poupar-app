@@ -5,7 +5,7 @@ interface ILogoProps {
   height?: number;
 }
 
-export function GreenFullLogo({ width = 100, height = 31 }: ILogoProps) {
+export function GreenFullLogo({ width = 135, height = 31 }: ILogoProps) {
   return (
     <Svg width={width} height={height} fill='none'>
       <Path

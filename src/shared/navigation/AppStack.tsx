@@ -33,7 +33,11 @@ export function AppStack() {
       initialRouteName='AppTabs'
       screenLayout={({ children }) => <ScreenLayout>{children}</ScreenLayout>}
     >
-      <Stack.Screen name='AppTabs' component={AppTabNavigator} />
+      <Stack.Screen
+        name='AppTabs'
+        component={AppTabNavigator}
+        layout={({ children }) => <ScreenLayout edges={['top']}>{children}</ScreenLayout>}
+      />
       <Stack.Screen name='Product' component={() => <AppText>Product</AppText>} />
       <Stack.Screen
         name='OrderCreated'

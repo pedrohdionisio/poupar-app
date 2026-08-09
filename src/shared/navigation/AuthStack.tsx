@@ -4,9 +4,10 @@ import {
   type NativeStackNavigationProp,
   type NativeStackScreenProps
 } from '@react-navigation/native-stack';
-import { AppText } from '@/presentation/components/AppText/AppText';
 import { ScreenLayout } from '@/presentation/layouts/ScreenLayout/ScreenLayout';
+import { ForgotPassword } from '@/presentation/screens/ForgotPassword/ForgotPassword';
 import { Login } from '@/presentation/screens/Login/Login';
+import { ResetPassword } from '@/presentation/screens/ResetPassword/ResetPassword';
 
 type AuthStackParamList = {
   Login: undefined;
@@ -43,15 +44,8 @@ export function AuthStack() {
           </ScreenLayout>
         )}
       />
-      <Stack.Screen
-        name='ForgotPassword'
-        component={() => <AppText>ForgotPassword</AppText>}
-      />
-      <Stack.Screen
-        name='ResetPassword'
-        component={() => <AppText>ResetPassword</AppText>}
-      />
-      <Stack.Screen name='Home' component={() => <AppText>Home</AppText>} />
+      <Stack.Screen name='ForgotPassword' component={ForgotPassword} />
+      <Stack.Screen name='ResetPassword' component={ResetPassword} />
     </Stack.Navigator>
   );
 }

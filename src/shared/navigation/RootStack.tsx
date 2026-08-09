@@ -25,7 +25,7 @@ export type RootStackRouteProps<TRouteName extends keyof RootStackParamList> = R
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export function RootStack() {
-  const signedIn = false;
+  const signedIn = true;
 
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>

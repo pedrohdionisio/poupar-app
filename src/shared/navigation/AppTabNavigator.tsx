@@ -6,6 +6,7 @@ import {
 import type { RouteProp } from '@react-navigation/native';
 import { AppText } from '@/presentation/components/AppText/AppText';
 import { CustomTabBar } from '@/presentation/components/CustomTabBar/CustomTabBar';
+import { Home } from '@/presentation/screens/Home/Home';
 
 type AppTabParamList = {
   Orders: undefined;
@@ -33,7 +34,7 @@ export function AppTabNavigator() {
       tabBar={(props) => <CustomTabBar {...props} />}
     >
       <Tab.Screen name='Orders' component={() => <AppText>OrderCreated</AppText>} />
-      <Tab.Screen name='Home' component={() => <AppText>OrderCreated</AppText>} />
+      <Tab.Screen name='Home' component={Home} />
       <Tab.Screen
         name='Notifications'
         component={() => <AppText>OrderCreated</AppText>}

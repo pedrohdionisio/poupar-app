@@ -36,12 +36,22 @@ export function Login() {
                 Acessar minha conta
               </Button>
 
-              <View className='mt-4 flex-row justify-center gap-0.5 pt-3.5'>
-                <AppText color='inverse'>Não tem cadastro?</AppText>
+              <View className='mt-4'>
+                <View className='flex-row justify-center gap-0.5 pt-3.5'>
+                  <AppText color='inverse'>Esqueceu a senha?</AppText>
 
-                <TouchableOpacity onPress={() => navigation.navigate('ForgotPassword')}>
-                  <AppText color='brandLight'>Crie a sua conta</AppText>
-                </TouchableOpacity>
+                  <TouchableOpacity onPress={() => navigation.navigate('ForgotPassword')}>
+                    <AppText color='brandLight'>Recupere aqui</AppText>
+                  </TouchableOpacity>
+                </View>
+
+                <View className='flex-row justify-center gap-0.5 pt-3.5'>
+                  <AppText color='inverse'>Ainda não tem acesso?</AppText>
+
+                  <TouchableOpacity onPress={() => navigation.navigate('ForgotPassword')}>
+                    <AppText color='brandLight'>Crie sua conta</AppText>
+                  </TouchableOpacity>
+                </View>
               </View>
             </View>
           </View>
