@@ -4,14 +4,23 @@ import {
   createBottomTabNavigator
 } from '@react-navigation/bottom-tabs';
 import type { RouteProp } from '@react-navigation/native';
-import { AppText } from '@/presentation/components/AppText/AppText';
 import { CustomTabBar } from '@/presentation/components/CustomTabBar/CustomTabBar';
-import { Home } from '@/presentation/screens/Home/Home';
+import { Merchants } from '@/presentation/screens/Merchants/Merchants';
+import { Profile } from '@/presentation/screens/Profile/Profile';
+import { Receipts } from '@/presentation/screens/Receipts/Receipts';
+import { Scan } from '@/presentation/screens/Scan/Scan';
+import { Statistics } from '@/presentation/screens/Statistics/Statistics';
 
+/**
+ * A ordem das rotas define a posição na tab bar: a rota do meio (`Scan`) é
+ * renderizada como o botão central elevado pelo `CustomTabBar`.
+ */
 type AppTabParamList = {
-  Orders: undefined;
-  Home: undefined;
-  Notifications: undefined;
+  Receipts: undefined;
+  Statistics: undefined;
+  Scan: undefined;
+  Merchants: undefined;
+  Profile: undefined;
 };
 
 export type AppTabNavigationProps = BottomTabNavigationProp<AppTabParamList>;
@@ -23,22 +32,20 @@ export type AppTabRouteProps<TRouteName extends keyof AppTabParamList> = RoutePr
   AppTabParamList,
   TRouteName
 >;
-
 const Tab = createBottomTabNavigator<AppTabParamList>();
 
 export function AppTabNavigator() {
   return (
     <Tab.Navigator
       screenOptions={{ headerShown: false }}
-      initialRouteName='Home'
+      initialRouteName='Receipts'
       tabBar={(props) => <CustomTabBar {...props} />}
     >
-      <Tab.Screen name='Orders' component={() => <AppText>OrderCreated</AppText>} />
-      <Tab.Screen name='Home' component={Home} />
-      <Tab.Screen
-        name='Notifications'
-        component={() => <AppText>OrderCreated</AppText>}
-      />
+      <Tab.Screen name='Receipts' component={Receipts} />
+      <Tab.Screen name='Statistics' component={Statistics} />
+      <Tab.Screen name='Scan' component={Scan} />
+      <Tab.Screen name='Merchants' component={Merchants} />
+      <Tab.Screen name='Profile' component={Profile} />
     </Tab.Navigator>
   );
 }

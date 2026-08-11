@@ -5,9 +5,21 @@ interface ILogoProps {
   height?: number;
 }
 
-export function GreenFullLogo({ width = 135, height = 31 }: ILogoProps) {
+const ORIGINAL_WIDTH = 135;
+const ORIGINAL_HEIGHT = 31;
+const ASPECT_RATIO = ORIGINAL_WIDTH / ORIGINAL_HEIGHT;
+
+export function GreenFullLogo({ width, height }: ILogoProps) {
+  const resolvedHeight = height ?? (width ? width / ASPECT_RATIO : ORIGINAL_HEIGHT);
+  const resolvedWidth = width ?? resolvedHeight * ASPECT_RATIO;
+
   return (
-    <Svg width={width} height={height} fill='none'>
+    <Svg
+      width={resolvedWidth}
+      height={resolvedHeight}
+      viewBox={`0 0 ${ORIGINAL_WIDTH} ${ORIGINAL_HEIGHT}`}
+      fill='none'
+    >
       <Path
         fill='#2cba80'
         d='M4.8 8.07h6.09l2.37 3.6v9.84L10.86 24H4.83L2.4 22.56v7.92H0V8.07h2.4v1.47zM2.4 20.1l1.2 1.74h6.33l.9-.93v-8.94l-1.14-1.71H3.33l-.93.93zM20.418 8.07h8.49l2.4 3.6v9.84l-2.4 2.49h-8.46l-2.43-3.6v-9.84zm-.03 12.03 1.2 1.74h6.36l.9-.96v-8.94l-1.14-1.71h-6.39l-.93.99zM46.807 8.07h2.43V24h-2.37v-1.47L44.407 24h-6l-2.43-3.6V8.07h2.4V20.1l1.17 1.71h6.39l.87-.93zM58.765 8.07h6.09l2.37 3.6v9.84l-2.4 2.49h-6.03l-2.43-1.44v7.92h-2.4V8.07h2.4v1.47zm-2.4 12.03 1.2 1.74h6.33l.9-.93v-8.94l-1.14-1.71h-6.36l-.93.93zM74.173 7.41h9.42l1.89 2.79V24h-2.52v-1.53L80.443 24h-6.27l-2.52-3.75v-1.2l4.68-4.86h6.63V9.63h-8.79zm0 12.54 1.17 1.77h7.62v-5.25h-5.64l-3.15 3.24zM89.791 8.07h1.32l2.85 1.71 1.65-1.71h6.18l1.56 2.28-1.8 1.23-.9-1.35h-4.11l-1.32 1.41v10.2h4.23V24h-9.66v-2.16h3.03v-9.9l-1.17-1.71h-1.86zM134.398 5.359A1 1 0 0 0 133.63 5h-20.165l-.76-4.179a1 1 0 0 0-.984-.821h-3.091a1 1 0 1 0 0 2h2.25l3.195 17.536c.094.52.324 1.006.666 1.409a3.51 3.51 0 0 0-.973 3.53 3.5 3.5 0 0 0 2.709 2.466 3.497 3.497 0 0 0 4.133-3.065 3.5 3.5 0 0 0-.319-1.876h5.678a3.497 3.497 0 0 0 1.822 4.734 3.498 3.498 0 0 0 4.772-2.551A3.5 3.5 0 0 0 129.13 20h-12.104a1 1 0 0 1-.983-.821L115.646 17h14.5a3 3 0 0 0 2.952-2.464l1.519-8.357a1 1 0 0 0-.219-.82M118.63 23.5a1.499 1.499 0 1 1-2.998 0 1.499 1.499 0 0 1 2.998 0m12 0a1.499 1.499 0 1 1-2.998 0 1.499 1.499 0 0 1 2.998 0m.5-9.321a1 1 0 0 1-.987.821h-14.86l-1.454-8h18.602z'
