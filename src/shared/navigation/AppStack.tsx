@@ -5,11 +5,12 @@ import {
   type NativeStackNavigationProp,
   type NativeStackScreenProps
 } from '@react-navigation/native-stack';
-import { AppText } from '@/presentation/components/AppText/AppText';
+import { Scan } from '@/presentation/screens/Scan/Scan';
 import { AppTabNavigator } from './AppTabNavigator';
 
 type AppStackParamList = {
   AppTabs: undefined;
+  Scan: undefined;
   Product: undefined;
   OrderCreated: undefined;
 };
@@ -38,10 +39,11 @@ export function AppStack() {
         component={AppTabNavigator}
         layout={({ children }) => <ScreenLayout edges={['top']}>{children}</ScreenLayout>}
       />
-      <Stack.Screen name='Product' component={() => <AppText>Product</AppText>} />
       <Stack.Screen
-        name='OrderCreated'
-        component={() => <AppText>OrderCreated</AppText>}
+        name='Scan'
+        component={Scan}
+        options={{ presentation: 'fullScreenModal', animation: 'slide_from_bottom' }}
+        layout={({ children }) => <>{children}</>}
       />
     </Stack.Navigator>
   );

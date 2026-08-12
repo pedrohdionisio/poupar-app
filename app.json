@@ -26,6 +26,15 @@
     "experiments": {
       "tsconfigPaths": true
     },
-    "plugins": ["expo-font"]
+    "plugins": [
+      "expo-font",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "O Poupar usa a câmera para escanear o QR code das suas notas fiscais.",
+          "recordAudioAndroid": false
+        }
+      ]
+    ]
   }
 }

@@ -8,8 +8,9 @@ import { CustomTabBar } from '@/presentation/components/CustomTabBar/CustomTabBa
 import { Merchants } from '@/presentation/screens/Merchants/Merchants';
 import { Profile } from '@/presentation/screens/Profile/Profile';
 import { Receipts } from '@/presentation/screens/Receipts/Receipts';
-import { Scan } from '@/presentation/screens/Scan/Scan';
+import { ScanTabPlaceholder } from '@/presentation/screens/Scan/ScanTabPlaceholder';
 import { Statistics } from '@/presentation/screens/Statistics/Statistics';
+import type { AppStackNavigationProps } from './AppStack';
 
 /**
  * A ordem das rotas define a posição na tab bar: a rota do meio (`Scan`) é
@@ -43,7 +44,21 @@ export function AppTabNavigator() {
     >
       <Tab.Screen name='Receipts' component={Receipts} />
       <Tab.Screen name='Statistics' component={Statistics} />
-      <Tab.Screen name='Scan' component={Scan} />
+      {/*
+       * A rota existe só para reservar o slot central da tab bar (`centerIndex`
+       * do `CustomTabBar` depende da quantidade de rotas). O toque nunca navega
+       * para ela: é interceptado e abre o modal de scan no stack pai.
+       */}
+      <Tab.Screen
+        name='Scan'
+        component={ScanTabPlaceholder}
+        listeners={({ navigation }) => ({
+          tabPress: (event) => {
+            event.preventDefault();
+            navigation.getParent<AppStackNavigationProps>()?.navigate('Scan');
+          }
+        })}
+      />
       <Tab.Screen name='Merchants' component={Merchants} />
       <Tab.Screen name='Profile' component={Profile} />
     </Tab.Navigator>
