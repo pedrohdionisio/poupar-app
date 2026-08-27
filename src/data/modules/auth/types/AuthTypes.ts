@@ -45,3 +45,9 @@ export interface IGetMeResponse {
   role: AccountRoleType;
   createdAt: string;
 }
+
+export interface IUpdateAccountPayload {
+  accountId: string;
+  name: string;
+  role: AccountRoleType;
+}

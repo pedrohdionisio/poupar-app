@@ -8,6 +8,8 @@ const AUTH_ERROR_MESSAGES: Partial<Record<ApiErrorCode, string>> = {
   [ApiErrorCode.EXPIRED_PASSWORD_CODE]: 'O código expirou. Solicite um novo',
   [ApiErrorCode.INVALID_REFRESH_TOKEN]: 'Sua sessão expirou. Entre novamente',
   [ApiErrorCode.VALIDATION]: 'Verifique os dados informados',
+  [ApiErrorCode.FORBIDDEN]: 'Sua conta não tem permissão para esta ação',
+  [ApiErrorCode.RESOURCE_NOT_FOUND]: 'Não encontramos esta conta',
   [ApiErrorCode.INTERNAL_SERVER_ERROR]: 'Algo deu errado no servidor. Tente novamente'
 };
 

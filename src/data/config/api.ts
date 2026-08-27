@@ -1,4 +1,5 @@
 import axios, { type InternalAxiosRequestConfig, isAxiosError } from 'axios';
+import { ApiErrorCode, getApiErrorCode } from './apiError';
 import { env } from './env';
 
 const api = axios.create({
@@ -45,9 +46,17 @@ export function setRefreshTokenHandler(refreshHandler: () => Promise<void>) {
     async (error) => {
       const config = error.config as IRetriableRequestConfig | undefined;
 
+      /**
+       * O `Forbbiden` da poupar-api responde 401, não 403. Sem esta checagem um
+       * erro de permissão queimaria uma rotação de refresh token à toa — e se
+       * essa rotação falhar, o handler desloga o usuário.
+       */
+      const isForbidden = getApiErrorCode(error) === ApiErrorCode.FORBIDDEN;
+
       if (
         !isAxiosError(error) ||
         error.response?.status !== 401 ||
+        isForbidden ||
         !config ||
         config._retry ||
         config.url === '/auth/refresh-token'

@@ -8,7 +8,8 @@ import type {
   ISignInPayload,
   ISignInResponse,
   ISignUpPayload,
-  ISignUpResponse
+  ISignUpResponse,
+  IUpdateAccountPayload
 } from '../types/AuthTypes';
 
 async function signIn(payload: ISignInPayload): Promise<ISignInResponse> {
@@ -45,11 +46,23 @@ async function getMe(): Promise<IGetMeResponse> {
   return data;
 }
 
+/**
+ * A rota é `@AdminOnly()` na poupar-api: o `accountId` vai no path e o body exige
+ * `role` junto do `name`, mesmo quando só o nome muda.
+ */
+async function updateAccount({
+  accountId,
+  ...body
+}: IUpdateAccountPayload): Promise<void> {
+  await api.put(`/accounts/${accountId}`, body);
+}
+
 export const AuthService = {
   signIn,
   signUp,
   refreshToken,
   forgotPassword,
   resetPassword,
-  getMe
+  getMe,
+  updateAccount
 };
