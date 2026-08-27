@@ -13,7 +13,6 @@ type AuthStackParamList = {
   Login: undefined;
   ForgotPassword: undefined;
   ResetPassword: { email: string };
-  Home: undefined;
 };
 
 export type AuthStackNavigationProps = NativeStackNavigationProp<AuthStackParamList>;

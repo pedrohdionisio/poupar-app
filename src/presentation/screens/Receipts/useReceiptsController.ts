@@ -1,6 +1,6 @@
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import type { IReceipt } from './interfaces';
-import { MOCK_AVERAGE_AMOUNT, MOCK_RECEIPTS, MOCK_USER_NAME } from './mocks';
+import { MOCK_AVERAGE_AMOUNT, MOCK_RECEIPTS } from './mocks';
 
 /** Respiro entre o último item da lista e a tab bar flutuante. */
 const LIST_BOTTOM_SPACING = 24;
@@ -9,7 +9,6 @@ export function useReceiptsController() {
   const tabBarHeight = useBottomTabBarHeight();
 
   // TODO: trocar os mocks pelos dados reais (sessão + módulo de dados de notas).
-  const userName = MOCK_USER_NAME;
   const averageAmount = MOCK_AVERAGE_AMOUNT;
   const receipts = MOCK_RECEIPTS;
 
@@ -26,7 +25,6 @@ export function useReceiptsController() {
   }
 
   return {
-    userName,
     averageAmount,
     receipts,
     listBottomPadding: tabBarHeight + LIST_BOTTOM_SPACING,

@@ -20,6 +20,7 @@ module.exports = {
           main: '#2CBA80',
           dark: '#13915D'
         },
+        danger: '#E5484D',
         grays: {
           50: '#F8FAFC',
           100: '#F1F5F9',

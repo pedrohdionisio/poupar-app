@@ -1,18 +1,21 @@
 import { AppText } from '@presentation/components/AppText/AppText';
 import { Button } from '@presentation/components/Button/Button';
-import { useNavigation } from '@react-navigation/native';
 import greetingsBg from '@shared/assets/greetings-bg/image.jpg';
-import type { AuthStackNavigationProps } from '@shared/navigation/AuthStack';
-import { useRef } from 'react';
 import { ImageBackground, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { GreenFullLogo } from '@/shared/assets/svgs/GreenFullLogo';
-import type { ISignInBottomSheet } from './components/SignInBottomSheet/interfaces';
 import { SignInBottomSheet } from './components/SignInBottomSheet/SignInBottomSheet';
+import { SignUpBottomSheet } from './components/SignUpBottomSheet/SignUpBottomSheet';
+import { useLoginController } from './useLoginController';
 
 export function Login() {
-  const signInBottomSheetRef = useRef<ISignInBottomSheet>(null);
-  const navigation = useNavigation<AuthStackNavigationProps>();
+  const {
+    signInBottomSheetRef,
+    signUpBottomSheetRef,
+    handleOpenSignIn,
+    handleOpenSignUp,
+    handleGoToForgotPassword
+  } = useLoginController();
 
   return (
     <>
@@ -32,15 +35,13 @@ export function Login() {
             </AppText>
 
             <View className='mt-6 w-full p-5'>
-              <Button onPress={() => signInBottomSheetRef.current?.open()}>
-                Acessar minha conta
-              </Button>
+              <Button onPress={handleOpenSignIn}>Acessar minha conta</Button>
 
               <View className='mt-4'>
                 <View className='flex-row justify-center gap-0.5 pt-3.5'>
                   <AppText color='inverse'>Esqueceu a senha?</AppText>
 
-                  <TouchableOpacity onPress={() => navigation.navigate('ForgotPassword')}>
+                  <TouchableOpacity onPress={handleGoToForgotPassword}>
                     <AppText color='brandLight'>Recupere aqui</AppText>
                   </TouchableOpacity>
                 </View>
@@ -48,7 +49,7 @@ export function Login() {
                 <View className='flex-row justify-center gap-0.5 pt-3.5'>
                   <AppText color='inverse'>Ainda não tem acesso?</AppText>
 
-                  <TouchableOpacity onPress={() => navigation.navigate('ForgotPassword')}>
+                  <TouchableOpacity onPress={handleOpenSignUp}>
                     <AppText color='brandLight'>Crie sua conta</AppText>
                   </TouchableOpacity>
                 </View>
@@ -59,6 +60,7 @@ export function Login() {
       </ImageBackground>
 
       <SignInBottomSheet ref={signInBottomSheetRef} />
+      <SignUpBottomSheet ref={signUpBottomSheetRef} />
     </>
   );
 }

@@ -2,21 +2,20 @@ import { AppText } from '@presentation/components/AppText/AppText';
 import { COLORS } from '@shared/constants/colors';
 import { Filter, Search } from 'lucide-react-native';
 import { Pressable, View } from 'react-native';
+import { useAuth } from '@/data/contexts/AuthProvider';
 import { GreenFullLogo } from '@/shared/assets/svgs/GreenFullLogo';
 import type { IReceiptsHeaderProps } from './interfaces';
 
 const ICON_HIT_SLOP = 12;
 
-export function ReceiptsHeader({
-  userName,
-  onSearchPress,
-  onMenuPress
-}: IReceiptsHeaderProps) {
+export function ReceiptsHeader({ onSearchPress, onMenuPress }: IReceiptsHeaderProps) {
+  const { signOut, user } = useAuth();
+
   return (
     <View className='flex-row items-start justify-between px-5 pt-2 pb-6'>
       <View className='flex-1 gap-1 pr-4'>
         <AppText variant='title' size='xl' color='strong' numberOfLines={1}>
-          Olá, {userName}
+          Olá, {user?.name}
         </AppText>
 
         <View className='flex flex-row items-center gap-2'>
@@ -46,7 +45,7 @@ export function ReceiptsHeader({
           accessibilityLabel='Abrir menu'
           className='active:opacity-60'
         >
-          <Filter size={22} color={COLORS.grays[900]} strokeWidth={2} />
+          <Filter size={22} color={COLORS.grays[900]} strokeWidth={2} onPress={signOut} />
         </Pressable>
       </View>
     </View>

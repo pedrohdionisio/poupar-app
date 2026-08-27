@@ -34,7 +34,8 @@
           "cameraPermission": "O Poupar usa a câmera para escanear o QR code das suas notas fiscais.",
           "recordAudioAndroid": false
         }
-      ]
+      ],
+      "expo-secure-store"
     ]
   }
 }

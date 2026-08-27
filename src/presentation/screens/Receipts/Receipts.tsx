@@ -7,7 +7,6 @@ import { useReceiptsController } from './useReceiptsController';
 
 export function Receipts() {
   const {
-    userName,
     averageAmount,
     receipts,
     listBottomPadding,
@@ -18,11 +17,7 @@ export function Receipts() {
 
   return (
     <ScreenLayout edges={['top']}>
-      <ReceiptsHeader
-        userName={userName}
-        onSearchPress={handleSearchPress}
-        onMenuPress={handleMenuPress}
-      />
+      <ReceiptsHeader onSearchPress={handleSearchPress} onMenuPress={handleMenuPress} />
 
       <ReceiptsList
         receipts={receipts}

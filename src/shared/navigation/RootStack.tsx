@@ -1,3 +1,4 @@
+import { useAuth } from '@data/contexts/AuthProvider';
 import type { RouteProp } from '@react-navigation/native';
 import {
   createNativeStackNavigator,
@@ -25,7 +26,7 @@ export type RootStackRouteProps<TRouteName extends keyof RootStackParamList> = R
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export function RootStack() {
-  const signedIn = true;
+  const { signedIn } = useAuth();
 
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
