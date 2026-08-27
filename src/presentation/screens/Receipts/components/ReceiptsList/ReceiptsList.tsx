@@ -1,5 +1,5 @@
+import type { IPurchase } from '@data/modules/purchase/types/Purchase';
 import { FlatList, View } from 'react-native';
-import type { IReceipt } from '../../interfaces';
 import { ReceiptListItem } from '../ReceiptListItem/ReceiptListItem';
 import { ReceiptsListEmpty } from '../ReceiptsListEmpty/ReceiptsListEmpty';
 import type { IReceiptsListProps } from './interfaces';
@@ -19,7 +19,7 @@ export function ReceiptsList({
   return (
     <FlatList
       data={receipts}
-      keyExtractor={(receipt: IReceipt) => receipt.id}
+      keyExtractor={(receipt: IPurchase) => receipt.id}
       renderItem={({ item }) => (
         <ReceiptListItem receipt={item} onPress={onReceiptPress} />
       )}

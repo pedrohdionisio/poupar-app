@@ -1,6 +1,6 @@
-import type { IReceipt } from '../../interfaces';
+import type { IPurchase } from '@data/modules/purchase/types/Purchase';
 
 export interface IReceiptListItemProps {
-  receipt: IReceipt;
-  onPress: (receipt: IReceipt) => void;
+  receipt: IPurchase;
+  onPress: (receipt: IPurchase) => void;
 }

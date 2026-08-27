@@ -1,10 +1,10 @@
+import type { IPurchase } from '@data/modules/purchase/types/Purchase';
 import type { ReactElement } from 'react';
-import type { IReceipt } from '../../interfaces';
 
 export interface IReceiptsListProps {
-  receipts: IReceipt[];
+  receipts: IPurchase[];
   /** Espaço extra no fim da lista, já que a tab bar flutua sobre o conteúdo. */
   bottomPadding: number;
-  onReceiptPress: (receipt: IReceipt) => void;
+  onReceiptPress: (receipt: IPurchase) => void;
   ListHeaderComponent?: ReactElement;
 }
