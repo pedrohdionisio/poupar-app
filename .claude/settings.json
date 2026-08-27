@@ -1,0 +1,27 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(yarn typecheck)",
+      "Bash(yarn lint)",
+      "Bash(yarn lint:fix)",
+      "Bash(yarn format)",
+      "Bash(node .claude/scripts/check-classes.mjs)",
+      "Bash(npx expo *)",
+      "Bash(npx biome *)",
+      "Bash(git status*)",
+      "Bash(git diff*)",
+      "Bash(git log*)",
+      "Bash(git branch*)",
+      "Bash(find src *)",
+      "Bash(grep *)",
+      "Bash(ls *)",
+      "Bash(mkdir -p *)"
+    ],
+    "deny": [
+      "Bash(rm -rf *)",
+      "Bash(git push --force*)",
+      "Read(//.env)",
+      "Read(//**/.env)"
+    ]
+  }
+}

@@ -50,3 +50,6 @@ yarn-error.*
 
 # Biome
 .biome-cache/
+
+# Claude Code
+.claude/settings.local.json
