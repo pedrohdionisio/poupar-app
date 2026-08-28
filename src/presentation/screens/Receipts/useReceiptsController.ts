@@ -2,6 +2,8 @@ import { getPurchaseErrorMessage } from '@data/modules/purchase/constants/purcha
 import type { IPurchase } from '@data/modules/purchase/types/Purchase';
 import { useListPurchases } from '@data/modules/purchase/useCases/listPurchases/useListPurchases';
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
+import { useNavigation } from '@react-navigation/native';
+import type { AppStackNavigationProps } from '@shared/navigation/AppStack';
 import { useMemo } from 'react';
 import { getAverageAmount } from './utils';
 
@@ -20,6 +22,8 @@ const ERROR_FALLBACK = 'Verifique sua conexão e tente de novo.';
 const EMPTY_PURCHASES: IPurchase[] = [];
 
 export function useReceiptsController() {
+  const navigation = useNavigation<AppStackNavigationProps>();
+
   const tabBarHeight = useBottomTabBarHeight();
 
   const {
@@ -35,8 +39,8 @@ export function useReceiptsController() {
 
   const averageAmount = useMemo(() => getAverageAmount(receipts), [receipts]);
 
-  function handleReceiptPress(_receipt: IPurchase) {
-    // TODO: navegar para o detalhe da nota.
+  function handleReceiptPress(receipt: IPurchase) {
+    navigation.navigate('PurchaseDetail', { purchase: receipt });
   }
 
   function handleRetry() {

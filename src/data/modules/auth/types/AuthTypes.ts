@@ -51,3 +51,9 @@ export interface IUpdateAccountPayload {
   name: string;
   role: AccountRoleType;
 }
+
+/** O que a rota aceita no body — o `accountId` vai no path. */
+export interface IUpdateAccountBody {
+  name: string;
+  role: AccountRoleType;
+}

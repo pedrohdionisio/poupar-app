@@ -1,3 +1,4 @@
+import type { IPurchase } from '@data/modules/purchase/types/Purchase';
 import { ScreenLayout } from '@presentation/layouts/ScreenLayout/ScreenLayout';
 import type { RouteProp } from '@react-navigation/native';
 import {
@@ -5,12 +6,18 @@ import {
   type NativeStackNavigationProp,
   type NativeStackScreenProps
 } from '@react-navigation/native-stack';
+import { PurchaseDetail } from '@/presentation/screens/PurchaseDetail/PurchaseDetail';
 import { Scan } from '@/presentation/screens/Scan/Scan';
 import { AppTabNavigator } from './AppTabNavigator';
 
 type AppStackParamList = {
   AppTabs: undefined;
   Scan: undefined;
+  /**
+   * A compra viaja inteira no param porque a API não tem `GET /purchases/{id}`:
+   * só a listagem devolve esses campos. O detalhe busca apenas os itens.
+   */
+  PurchaseDetail: { purchase: IPurchase };
   Product: undefined;
   OrderCreated: undefined;
 };
@@ -39,6 +46,7 @@ export function AppStack() {
         component={AppTabNavigator}
         layout={({ children }) => <ScreenLayout edges={['top']}>{children}</ScreenLayout>}
       />
+      <Stack.Screen name='PurchaseDetail' component={PurchaseDetail} />
       <Stack.Screen
         name='Scan'
         component={Scan}

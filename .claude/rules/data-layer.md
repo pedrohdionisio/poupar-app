@@ -13,6 +13,7 @@ importa `api`, `axios` ou `useQuery` direto.
 src/data/modules/<módulo>/
 ├── types/<Módulo>Types.ts             contratos da API: payload e response
 ├── services/<Módulo>Service.ts        chamadas HTTP, uma função por endpoint
+├── services/mappers/<Ação>Mapper.ts   tradução entre o formato da API e o domínio
 ├── keys/<Módulo>Keys.ts               enums de query key e mutation key
 ├── schemas/<ação>Schema.ts            Zod de formulário + tipo inferido
 ├── constants/<módulo>ErrorMessages.ts tradução de ErrorCode → pt-BR
@@ -36,7 +37,7 @@ Datas chegam como `string` ISO — só vire `Date` na hora de formatar.
 ## Service
 
 Funções soltas sem `export`, agrupadas num objeto no fim do arquivo. Nada além do
-`api.<verbo>` e do `return data`:
+`api.<verbo>`, do mapper e do `return`:
 
 ```ts
 async function signIn(payload: ISignInPayload): Promise<ISignInResponse> {
@@ -51,6 +52,42 @@ export const AuthService = { signIn, signUp };
 Endpoint `204` retorna `Promise<void>` e não desestrutura nada.
 
 Sem try/catch: o erro sobe para o useCase e é traduzido no controller.
+
+## Mappers
+
+Quando o formato da API não é o que a UI consome — centavos, milésimos, campo com
+outro nome, máscara, `snake_case` — a tradução mora num mapper em
+`services/mappers/`, um arquivo por ação, usado **dentro do service**:
+
+```ts
+function toDomain(response: IListPurchasesResponse): IPurchase[] {
+  return response.map((purchase) => ({
+    itemsCount: purchase.itemCount,
+    totalAmount: Money.fromCents(purchase.totalCents)
+  }));
+}
+
+export const ListPurchasesMapper = { toDomain };
+```
+
+```ts
+async function listPurchases(params: IListPurchasesParams): Promise<IPurchase[]> {
+  const { data } = await api.get<IListPurchasesResponse>('/purchases', { params });
+
+  return ListPurchasesMapper.toDomain(data);
+}
+```
+
+- `toDomain` traduz a resposta da API para o tipo de domínio.
+- `toPersistence` traduz o payload de domínio para o corpo que a API aceita.
+- Só existe a direção que tem trabalho a fazer: endpoint só de leitura não ganha
+  `toPersistence` vazio.
+- O service passa a devolver o tipo de **domínio**, não o espelho da API.
+- Conversão genérica (centavos, milésimos) vem de `@shared/utils` — `Money`,
+  `Quantity` —, não duplicada em cada mapper.
+
+Endpoint sem nenhuma transformação não precisa de mapper: o service devolve
+`data` direto.
 
 ## Keys
 
@@ -140,6 +177,6 @@ de um formulário só daquela tela mora em `schema.ts` ao lado da tela.
 
 - `axios` fora de `data/config/api.ts`.
 - `useQuery`/`useMutation` fora de `data/modules/**/useCases/`.
-- Mapear/renomear campo da API dentro do componente — se precisa transformar,
-  transforme no useCase e devolva pronto.
+- Mapear/renomear campo da API fora de `services/mappers/` — nem no componente,
+  nem no controller, nem no `select` do useCase.
 - `fetch` nativo.

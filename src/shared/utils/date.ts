@@ -13,14 +13,22 @@ const SHORT_MONTHS = [
   'dez.'
 ];
 
+/** Só data, sem hora nem fuso: `2026-04-27`. */
+const DATE_ONLY_PATTERN = /^(\d{4})-(\d{2})-(\d{2})$/;
+
 /**
- * `YYYY-MM-DD` é interpretado como UTC pelo construtor `Date`, o que adianta o
- * dia em fusos negativos. Por isso montamos a data em horário local na mão.
+ * Dois casos opostos, por isso o teste explícito:
+ *
+ * - `YYYY-MM-DD` puro o construtor `Date` interpreta como UTC, o que adianta o
+ *   dia em fusos negativos — montamos em horário local na mão.
+ * - ISO com hora (o que a API manda em `purchasedAt`) é um instante UTC real: aí
+ *   o construtor é que está certo, porque converte para o fuso do aparelho.
+ *   Cortar o prefixo aqui mostraria 28/04 numa compra feita às 22h de 27/04.
  */
 function parse(value: Date | string): Date {
   if (value instanceof Date) return value;
 
-  const match = /^(\d{4})-(\d{2})-(\d{2})/.exec(value);
+  const match = DATE_ONLY_PATTERN.exec(value);
 
   if (!match) return new Date(value);
 
@@ -36,6 +44,14 @@ function toDayMonth(value: Date | string): string {
   return `${date.getDate()} de ${SHORT_MONTHS[date.getMonth()] ?? ''}`;
 }
 
+/** `2026-04-27` -> `27 de abr. de 2026` */
+function toDayMonthYear(value: Date | string): string {
+  const date = parse(value);
+
+  return `${date.getDate()} de ${SHORT_MONTHS[date.getMonth()] ?? ''} de ${date.getFullYear()}`;
+}
+
 export const DateFormat = {
-  toDayMonth
+  toDayMonth,
+  toDayMonthYear
 };

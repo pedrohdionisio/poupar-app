@@ -2,6 +2,7 @@ import { ApiErrorCode, getApiErrorCode } from '@data/config/apiError';
 
 const PURCHASE_ERROR_MESSAGES: Partial<Record<ApiErrorCode, string>> = {
   [ApiErrorCode.VALIDATION]: 'Tente novamente em instantes',
+  [ApiErrorCode.RESOURCE_NOT_FOUND]: 'Não encontramos o recibo desta compra',
   [ApiErrorCode.INTERNAL_SERVER_ERROR]: 'Algo deu errado no servidor. Tente novamente'
 };
 

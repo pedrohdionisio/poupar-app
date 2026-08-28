@@ -1,7 +1,7 @@
 import { AppText } from '@presentation/components/AppText/AppText';
 import { ReceiptsError } from '../ReceiptsError/ReceiptsError';
 import { ReceiptsList } from '../ReceiptsList/ReceiptsList';
-import { ReceiptsLoading } from '../ReceiptsLoading/ReceiptsLoading';
+import { ReceiptsSkeleton } from '../ReceiptsSkeleton/ReceiptsSkeleton';
 import { ReceiptsSummaryCard } from '../ReceiptsSummaryCard/ReceiptsSummaryCard';
 import type { IReceiptsContentProps } from './interfaces';
 
@@ -18,7 +18,7 @@ export function ReceiptsContent({
   onRetry
 }: IReceiptsContentProps) {
   if (isLoading) {
-    return <ReceiptsLoading />;
+    return <ReceiptsSkeleton />;
   }
 
   if (hasError) {

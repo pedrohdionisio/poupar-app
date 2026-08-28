@@ -11,6 +11,7 @@ import type {
   ISignUpResponse,
   IUpdateAccountPayload
 } from '../types/AuthTypes';
+import { UpdateAccountMapper } from './mappers/UpdateAccountMapper';
 
 async function signIn(payload: ISignInPayload): Promise<ISignInResponse> {
   const { data } = await api.post<ISignInResponse>('/auth/sign-in', payload);
@@ -46,15 +47,11 @@ async function getMe(): Promise<IGetMeResponse> {
   return data;
 }
 
-/**
- * A rota é `@AdminOnly()` na poupar-api: o `accountId` vai no path e o body exige
- * `role` junto do `name`, mesmo quando só o nome muda.
- */
-async function updateAccount({
-  accountId,
-  ...body
-}: IUpdateAccountPayload): Promise<void> {
-  await api.put(`/accounts/${accountId}`, body);
+async function updateAccount(payload: IUpdateAccountPayload): Promise<void> {
+  await api.put(
+    `/accounts/${payload.accountId}`,
+    UpdateAccountMapper.toPersistence(payload)
+  );
 }
 
 export const AuthService = {
