@@ -9,10 +9,10 @@ import type { IMerchantListItemProps } from './interfaces';
 const EDIT_HIT_SLOP = 8;
 
 export function MerchantListItem({ merchant, onEditPress }: IMerchantListItemProps) {
-  const { legalName, lastPurchaseAt, purchasesCount } = merchant;
+  const { name, lastPurchaseAt, purchasesCount } = merchant;
 
   const displayName = getMerchantDisplayName(merchant);
-  const hasNickname = displayName !== legalName;
+  const hasAlias = displayName !== name;
 
   const purchasesLabel = `${purchasesCount} ${purchasesCount === 1 ? 'compra' : 'compras'}`;
 
@@ -27,9 +27,9 @@ export function MerchantListItem({ merchant, onEditPress }: IMerchantListItemPro
           {displayName}
         </AppText>
 
-        {hasNickname && (
+        {hasAlias && (
           <AppText size='xs' color='subtle' numberOfLines={1}>
-            {legalName}
+            {name}
           </AppText>
         )}
 

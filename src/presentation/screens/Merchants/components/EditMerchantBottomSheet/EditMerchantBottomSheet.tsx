@@ -1,3 +1,4 @@
+import { ALIAS_MAX_LENGTH } from '@data/modules/merchant/useCases/updateAccountMerchantAlias/schemas/editMerchantSchema';
 import {
   BottomSheetModal,
   BottomSheetTextInput,
@@ -8,18 +9,20 @@ import { Button } from '@presentation/components/Button/Button';
 import { Input } from '@presentation/components/Input/Input';
 import { View } from 'react-native';
 import type { IEditMerchantBottomSheetProps } from './interfaces';
+
 import { useEditMerchantBottomSheetController } from './useEditMerchantBottomSheetController';
 
-export function EditMerchantBottomSheet({ ref, onSave }: IEditMerchantBottomSheetProps) {
+export function EditMerchantBottomSheet({ ref }: IEditMerchantBottomSheetProps) {
   const {
     bottomSheetModalRef,
     bottom,
     merchant,
     form,
-    canClearNickname,
+    isUpdatingAlias,
+    canClearAlias,
     handleSubmit,
-    handleClearNickname
-  } = useEditMerchantBottomSheetController({ ref, onSave });
+    handleClearAlias
+  } = useEditMerchantBottomSheetController({ ref });
 
   return (
     <BottomSheetModal
@@ -34,13 +37,13 @@ export function EditMerchantBottomSheet({ ref, onSave }: IEditMerchantBottomShee
           </AppText>
 
           <AppText size='sm' color='muted'>
-            Na nota ele aparece como {merchant?.legalName}
+            Na nota ele aparece como {merchant?.name}
           </AppText>
         </View>
 
         <View className='gap-4'>
           <Input
-            name='nickname'
+            name='alias'
             control={form.control}
             label='Nome do estabelecimento'
             placeholder='Ex.: Mercado da esquina'
@@ -48,13 +51,19 @@ export function EditMerchantBottomSheet({ ref, onSave }: IEditMerchantBottomShee
             autoCapitalize='sentences'
             returnKeyType='done'
             onSubmitEditing={handleSubmit}
-            maxLength={40}
+            maxLength={ALIAS_MAX_LENGTH}
           />
 
-          <Button onPress={handleSubmit}>Salvar</Button>
+          <Button
+            onPress={handleSubmit}
+            isLoading={isUpdatingAlias}
+            disabled={isUpdatingAlias}
+          >
+            Salvar
+          </Button>
 
-          {canClearNickname && (
-            <Button variant='ghost' onPress={handleClearNickname}>
+          {canClearAlias && (
+            <Button variant='ghost' onPress={handleClearAlias} disabled={isUpdatingAlias}>
               Usar o nome original
             </Button>
           )}

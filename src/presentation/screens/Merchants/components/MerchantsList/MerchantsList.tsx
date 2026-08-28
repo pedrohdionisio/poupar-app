@@ -1,5 +1,5 @@
+import type { IMerchant } from '@data/modules/merchant/types/Merchant';
 import { FlatList, View } from 'react-native';
-import type { IMerchant } from '../../interfaces';
 import { MerchantListItem } from '../MerchantListItem/MerchantListItem';
 import { MerchantsListEmpty } from '../MerchantsListEmpty/MerchantsListEmpty';
 import type { IMerchantsListProps } from './interfaces';
@@ -20,7 +20,7 @@ export function MerchantsList({
   return (
     <FlatList
       data={merchants}
-      keyExtractor={(merchant: IMerchant) => merchant.id}
+      keyExtractor={(merchant: IMerchant) => merchant.cnpj}
       renderItem={({ item }) => (
         <MerchantListItem merchant={item} onEditPress={onEditPress} />
       )}

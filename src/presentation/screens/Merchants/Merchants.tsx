@@ -1,11 +1,8 @@
-import { AppText } from '@presentation/components/AppText/AppText';
 import { ScreenLayout } from '@presentation/layouts/ScreenLayout/ScreenLayout';
-import { cn } from '@shared/utils/cn';
 import { EditMerchantBottomSheet } from './components/EditMerchantBottomSheet/EditMerchantBottomSheet';
+import { MerchantsContent } from './components/MerchantsContent/MerchantsContent';
 import { MerchantsHeader } from './components/MerchantsHeader/MerchantsHeader';
-import { MerchantsList } from './components/MerchantsList/MerchantsList';
 import { MerchantsSearchInput } from './components/MerchantsSearchInput/MerchantsSearchInput';
-import { RecentMerchants } from './components/RecentMerchants/RecentMerchants';
 import { useMerchantsController } from './useMerchantsController';
 
 export function Merchants() {
@@ -14,12 +11,17 @@ export function Merchants() {
     searchTerm,
     recentMerchants,
     filteredMerchants,
-    isSearching,
+    hasRecentMerchants,
+    hasMerchants,
+    isLoadingMerchants,
+    isRefetchingMerchants,
+    hasMerchantsError,
+    errorMessage,
     listBottomPadding,
     handleSearchChange,
     handleClearSearch,
     handleEditPress,
-    handleSaveNickname
+    handleRetry
   } = useMerchantsController();
 
   return (
@@ -32,33 +34,22 @@ export function Merchants() {
         onClear={handleClearSearch}
       />
 
-      <MerchantsList
-        merchants={filteredMerchants}
+      <MerchantsContent
+        recentMerchants={recentMerchants}
+        filteredMerchants={filteredMerchants}
         searchTerm={searchTerm}
+        hasRecentMerchants={hasRecentMerchants}
+        hasMerchants={hasMerchants}
+        isLoading={isLoadingMerchants}
+        isRetrying={isRefetchingMerchants}
+        hasError={hasMerchantsError}
+        errorMessage={errorMessage}
         bottomPadding={listBottomPadding}
         onEditPress={handleEditPress}
-        ListHeaderComponent={
-          <>
-            {!isSearching && (
-              <RecentMerchants
-                merchants={recentMerchants}
-                onMerchantPress={handleEditPress}
-              />
-            )}
-
-            <AppText
-              variant='title'
-              size='lg'
-              color='strong'
-              className={cn('mb-1', !isSearching && 'mt-8')}
-            >
-              Todos os estabelecimentos
-            </AppText>
-          </>
-        }
+        onRetry={handleRetry}
       />
 
-      <EditMerchantBottomSheet ref={editBottomSheetRef} onSave={handleSaveNickname} />
+      <EditMerchantBottomSheet ref={editBottomSheetRef} />
     </ScreenLayout>
   );
 }

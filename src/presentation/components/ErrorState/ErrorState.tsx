@@ -3,9 +3,10 @@ import { Button } from '@presentation/components/Button/Button';
 import { COLORS } from '@shared/constants/colors';
 import { CloudOff } from 'lucide-react-native';
 import { View } from 'react-native';
-import type { IReceiptsErrorProps } from './interfaces';
+import type { IErrorStateProps } from './interfaces';
 
-export function ReceiptsError({ message, isRetrying, onRetry }: IReceiptsErrorProps) {
+/** Falha de carregamento que ocupa a tela inteira, com o caminho de volta. */
+export function ErrorState({ title, message, isRetrying, onRetry }: IErrorStateProps) {
   return (
     <View className='flex-1 items-center justify-center gap-4 px-5'>
       <View className='h-14 w-14 items-center justify-center rounded-2xl bg-grays-100'>
@@ -14,7 +15,7 @@ export function ReceiptsError({ message, isRetrying, onRetry }: IReceiptsErrorPr
 
       <View className='gap-1'>
         <AppText size='md' weight='semibold' color='strong' align='center'>
-          Não conseguimos carregar suas compras
+          {title}
         </AppText>
 
         <AppText size='sm' color='muted' align='center'>

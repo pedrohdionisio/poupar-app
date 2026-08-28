@@ -1,10 +1,10 @@
 import { useAuth } from '@data/contexts/AuthProvider';
 import { getAuthErrorMessage } from '@data/modules/auth/constants/authErrorMessages';
+import type { AccountRoleType } from '@data/modules/auth/types/AuthTypes';
 import {
   type SignUpFormType,
   signUpSchema
-} from '@data/modules/auth/schemas/signUpSchema';
-import type { AccountRoleType } from '@data/modules/auth/types/AuthTypes';
+} from '@data/modules/auth/useCases/signUp/schemas/signUpSchema';
 import type { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useImperativeHandle, useRef } from 'react';

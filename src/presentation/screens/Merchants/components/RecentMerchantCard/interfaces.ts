@@ -1,4 +1,4 @@
-import type { IMerchant } from '../../interfaces';
+import type { IMerchant } from '@data/modules/merchant/types/Merchant';
 
 export interface IRecentMerchantCardProps {
   merchant: IMerchant;

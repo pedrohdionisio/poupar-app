@@ -3,7 +3,7 @@ import { getAuthErrorMessage } from '@data/modules/auth/constants/authErrorMessa
 import {
   type SignInFormType,
   signInSchema
-} from '@data/modules/auth/schemas/signInSchema';
+} from '@data/modules/auth/useCases/signIn/schemas/signInSchema';
 import type { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useImperativeHandle, useRef } from 'react';

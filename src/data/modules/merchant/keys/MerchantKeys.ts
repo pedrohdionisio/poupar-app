@@ -1,0 +1,7 @@
+export enum MerchantMutationKeys {
+  UPDATE_ACCOUNT_MERCHANT_ALIAS = 'UPDATE_ACCOUNT_MERCHANT_ALIAS'
+}
+
+export enum MerchantQueryKeys {
+  LIST_ACCOUNT_MERCHANTS = 'LIST_ACCOUNT_MERCHANTS'
+}

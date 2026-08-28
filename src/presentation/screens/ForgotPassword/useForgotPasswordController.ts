@@ -2,7 +2,7 @@ import { getAuthErrorMessage } from '@data/modules/auth/constants/authErrorMessa
 import {
   type ForgotPasswordFormType,
   forgotPasswordSchema
-} from '@data/modules/auth/schemas/forgotPasswordSchema';
+} from '@data/modules/auth/useCases/forgotPassword/schemas/forgotPasswordSchema';
 import { useForgotPassword } from '@data/modules/auth/useCases/forgotPassword/useForgotPassword';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useNavigation } from '@react-navigation/native';

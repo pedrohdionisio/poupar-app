@@ -3,7 +3,7 @@ import { getAuthErrorMessage } from '@data/modules/auth/constants/authErrorMessa
 import {
   type UpdateNameFormType,
   updateNameSchema
-} from '@data/modules/auth/schemas/updateNameSchema';
+} from '@data/modules/auth/useCases/updateAccount/schemas/updateNameSchema';
 import { useUpdateAccount } from '@data/modules/auth/useCases/updateAccount/useUpdateAccount';
 import type { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { zodResolver } from '@hookform/resolvers/zod';

@@ -2,7 +2,7 @@ import { getAuthErrorMessage } from '@data/modules/auth/constants/authErrorMessa
 import {
   type ResetPasswordFormType,
   resetPasswordSchema
-} from '@data/modules/auth/schemas/resetPasswordSchema';
+} from '@data/modules/auth/useCases/resetPassword/schemas/resetPasswordSchema';
 import { useResetPassword } from '@data/modules/auth/useCases/resetPassword/useResetPassword';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useNavigation, useRoute } from '@react-navigation/native';

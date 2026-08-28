@@ -54,8 +54,8 @@ testável vai para o controller ou para `utils.ts`.
 
 ## Formulários
 
-`react-hook-form` + `zodResolver`, schema vindo do módulo de dados (ou de
-`schema.ts` local quando é só daquela tela):
+`react-hook-form` + `zodResolver`, schema vindo sempre da pasta `schemas/` do
+useCase correspondente em `src/data/`:
 
 ```ts
 const form = useForm<SignInFormType>({

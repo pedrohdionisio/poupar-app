@@ -1,6 +1,6 @@
+import type { IMerchant } from '@data/modules/merchant/types/Merchant';
 import { AppText } from '@presentation/components/AppText/AppText';
 import { FlatList, View } from 'react-native';
-import type { IMerchant } from '../../interfaces';
 import { RecentMerchantCard } from '../RecentMerchantCard/RecentMerchantCard';
 import type { IRecentMerchantsProps } from './interfaces';
 
@@ -22,7 +22,7 @@ export function RecentMerchants({ merchants, onMerchantPress }: IRecentMerchants
       <FlatList
         className='-mx-5'
         data={merchants}
-        keyExtractor={(merchant: IMerchant) => merchant.id}
+        keyExtractor={(merchant: IMerchant) => merchant.cnpj}
         renderItem={({ item }) => (
           <RecentMerchantCard merchant={item} onPress={onMerchantPress} />
         )}

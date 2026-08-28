@@ -1,9 +1,10 @@
+import { getMerchantErrorMessage } from '@data/modules/merchant/constants/merchantErrorMessages';
+import type { IMerchant } from '@data/modules/merchant/types/Merchant';
+import { useListAccountMerchants } from '@data/modules/merchant/useCases/listAccountMerchants/useListAccountMerchants';
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import { TextMatch } from '@shared/utils/text';
 import { useMemo, useRef, useState } from 'react';
 import type { IEditMerchantBottomSheet } from './components/EditMerchantBottomSheet/interfaces';
-import type { IMerchant } from './interfaces';
-import { MOCK_MERCHANTS } from './mocks';
 import { getMerchantDisplayName } from './utils';
 
 /** Respiro entre o último item da lista e a tab bar flutuante. */
@@ -12,47 +13,53 @@ const LIST_BOTTOM_SPACING = 24;
 /** Quantos estabelecimentos recentes cabem no carrossel do topo. */
 const RECENT_MERCHANTS_LIMIT = 5;
 
-export function useMerchantsController() {
-  const tabBarHeight = useBottomTabBarHeight();
+const ERROR_FALLBACK = 'Verifique sua conexão e tente de novo.';
 
+/** Referência estável para a lista não trocar de identidade a cada render. */
+const EMPTY_MERCHANTS: IMerchant[] = [];
+
+export function useMerchantsController() {
   const editBottomSheetRef = useRef<IEditMerchantBottomSheet>(null);
 
-  const [searchTerm, setSearchTerm] = useState('');
-  /** Apelidos editados nesta sessão, sobrepostos aos dados originais. */
-  const [nicknames, setNicknames] = useState<Record<string, string>>({});
+  const tabBarHeight = useBottomTabBarHeight();
 
-  // TODO: trocar os mocks pelos dados reais (módulo de dados de estabelecimentos).
-  const merchants = useMemo(
-    () =>
-      MOCK_MERCHANTS.map((merchant) => ({
-        ...merchant,
-        nickname: nicknames[merchant.id] ?? merchant.nickname
-      })),
-    [nicknames]
-  );
+  const {
+    merchants,
+    loadMerchants,
+    isLoadingMerchants,
+    isRefetchingMerchants,
+    hasMerchantsError,
+    merchantsError
+  } = useListAccountMerchants();
+
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const accountMerchants = merchants ?? EMPTY_MERCHANTS;
 
   const recentMerchants = useMemo(
     () =>
-      [...merchants]
+      [...accountMerchants]
         .sort((a, b) => b.lastPurchaseAt.localeCompare(a.lastPurchaseAt))
         .slice(0, RECENT_MERCHANTS_LIMIT),
-    [merchants]
+    [accountMerchants]
   );
 
   const filteredMerchants = useMemo(
     () =>
-      merchants
+      accountMerchants
         .filter(
           (merchant) =>
             !searchTerm.trim() ||
             TextMatch.includes(getMerchantDisplayName(merchant), searchTerm) ||
-            TextMatch.includes(merchant.legalName, searchTerm)
+            TextMatch.includes(merchant.name, searchTerm)
         )
         .sort((a, b) =>
           getMerchantDisplayName(a).localeCompare(getMerchantDisplayName(b), 'pt-BR')
         ),
-    [merchants, searchTerm]
+    [accountMerchants, searchTerm]
   );
+
+  const isSearching = !!searchTerm.trim();
 
   function handleSearchChange(value: string) {
     setSearchTerm(value);
@@ -66,23 +73,30 @@ export function useMerchantsController() {
     editBottomSheetRef.current?.open(merchant);
   }
 
-  function handleSaveNickname(merchantId: string, nickname: string) {
-    // TODO: persistir o apelido no módulo de dados.
-    setNicknames((current) => ({ ...current, [merchantId]: nickname }));
+  function handleRetry() {
+    loadMerchants();
   }
 
   return {
     editBottomSheetRef,
     searchTerm,
-    merchantsCount: merchants.length,
     recentMerchants,
     filteredMerchants,
+    isLoadingMerchants,
+    isRefetchingMerchants,
+    /**
+     * Um refetch que falha (o disparado pela mutation, por exemplo) não pode
+     * apagar da tela a lista que ainda está em cache e continua válida.
+     */
+    hasMerchantsError: hasMerchantsError && accountMerchants.length === 0,
+    errorMessage: getMerchantErrorMessage(merchantsError, ERROR_FALLBACK),
     /** O carrossel de recentes some enquanto a busca está ativa. */
-    isSearching: !!searchTerm.trim(),
+    hasRecentMerchants: !isSearching && recentMerchants.length > 0,
+    hasMerchants: filteredMerchants.length > 0,
     listBottomPadding: tabBarHeight + LIST_BOTTOM_SPACING,
     handleSearchChange,
     handleClearSearch,
     handleEditPress,
-    handleSaveNickname
+    handleRetry
   };
 }

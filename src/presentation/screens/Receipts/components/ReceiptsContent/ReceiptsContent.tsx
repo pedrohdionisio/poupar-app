@@ -1,5 +1,5 @@
 import { AppText } from '@presentation/components/AppText/AppText';
-import { ReceiptsError } from '../ReceiptsError/ReceiptsError';
+import { ErrorState } from '@presentation/components/ErrorState/ErrorState';
 import { ReceiptsList } from '../ReceiptsList/ReceiptsList';
 import { ReceiptsSkeleton } from '../ReceiptsSkeleton/ReceiptsSkeleton';
 import { ReceiptsSummaryCard } from '../ReceiptsSummaryCard/ReceiptsSummaryCard';
@@ -23,7 +23,12 @@ export function ReceiptsContent({
 
   if (hasError) {
     return (
-      <ReceiptsError message={errorMessage} isRetrying={isRetrying} onRetry={onRetry} />
+      <ErrorState
+        title='Não conseguimos carregar suas compras'
+        message={errorMessage}
+        isRetrying={isRetrying}
+        onRetry={onRetry}
+      />
     );
   }
 

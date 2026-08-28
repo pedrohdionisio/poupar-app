@@ -15,9 +15,11 @@ src/data/modules/<módulo>/
 ├── services/<Módulo>Service.ts        chamadas HTTP, uma função por endpoint
 ├── services/mappers/<Ação>Mapper.ts   tradução entre o formato da API e o domínio
 ├── keys/<Módulo>Keys.ts               enums de query key e mutation key
-├── schemas/<ação>Schema.ts            Zod de formulário + tipo inferido
 ├── constants/<módulo>ErrorMessages.ts tradução de ErrorCode → pt-BR
-└── useCases/<ação>/use<Ação>.ts       wrapper do React Query, o que a UI consome
+└── useCases/<ação>/
+    ├── use<Ação>.ts                   wrapper do React Query, o que a UI consome
+    ├── interfaces.ts                  opções que o chamador controla
+    └── schemas/<ação>Schema.ts        Zod de formulário + tipo inferido
 ```
 
 Nome do módulo no singular e minúsculo (`auth`, `merchant`, `receipt`),
@@ -161,8 +163,27 @@ export const signInSchema = z.object({ email: z.email('Formato de e-mail inváli
 export type SignInFormType = z.infer<typeof signInSchema>;
 ```
 
-Schema de formulário reusado por mais de uma tela mora no módulo de dados; schema
-de um formulário só daquela tela mora em `schema.ts` ao lado da tela.
+**Todo** schema mora em `src/data/`, dentro da pasta `schemas/` do useCase que ele
+alimenta — nunca ao lado da tela, mesmo quando só um formulário o usa:
+
+```
+src/data/modules/auth/useCases/signIn/
+├── useSignIn.ts
+└── schemas/signInSchema.ts
+```
+
+O formulário fica ao lado da ação que ele dispara: quem mexe no `useSignIn` vê o
+schema na mesma pasta. A tela importa pelo caminho completo:
+
+```ts
+import {
+  type SignInFormType,
+  signInSchema
+} from '@data/modules/auth/useCases/signIn/schemas/signInSchema';
+```
+
+Constante que o formulário e a UI compartilham (um `maxLength`, por exemplo) é
+exportada do próprio schema, para não existirem duas fontes do mesmo número.
 
 ## Config e contexts
 

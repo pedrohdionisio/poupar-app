@@ -40,7 +40,7 @@ Aliases (`tsconfig.json`): `@/*`, `@data/*`, `@presentation/*`, `@shared/*`.
 | Lógica de screen/componente | irmão | `use<Nome>Controller.ts` |
 | Dados falsos temporários | irmão | `mocks.ts` |
 | Helper puro da screen | irmão | `utils.ts` |
-| Schema de form local | irmão | `schema.ts` |
+| Schema de formulário | `data/modules/<módulo>/useCases/<ação>/schemas/` | `<ação>Schema.ts` |
 | Serviço HTTP | `data/modules/<módulo>/services/` | `<Módulo>Service.ts` |
 | Chaves do React Query | `data/modules/<módulo>/keys/` | `<Módulo>Keys.ts` |
 | Contratos da API | `data/modules/<módulo>/types/` | `<Módulo>Types.ts` |

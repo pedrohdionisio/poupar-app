@@ -1,5 +1,5 @@
+import type { IMerchant } from '@data/modules/merchant/types/Merchant';
 import type { ReactElement } from 'react';
-import type { IMerchant } from '../../interfaces';
 
 export interface IMerchantsListProps {
   merchants: IMerchant[];
