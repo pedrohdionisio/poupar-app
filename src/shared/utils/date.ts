@@ -44,6 +44,23 @@ function toDayMonth(value: Date | string): string {
   return `${date.getDate()} de ${SHORT_MONTHS[date.getMonth()] ?? ''}`;
 }
 
+const SHORT_WEEKDAYS = ['dom', 'seg', 'ter', 'qua', 'qui', 'sex', 'sáb'];
+
+/** `2026-04-27` -> `seg` */
+function toWeekday(value: Date | string): string {
+  return SHORT_WEEKDAYS[parse(value).getDay()] ?? '';
+}
+
+/** `2026-04-27` -> `abr.` */
+function toShortMonth(value: Date | string): string {
+  return SHORT_MONTHS[parse(value).getMonth()] ?? '';
+}
+
+/** `2026-04-07` -> `07` */
+function toDayOfMonth(value: Date | string): string {
+  return String(parse(value).getDate()).padStart(2, '0');
+}
+
 /** `2026-04-27` -> `27 de abr. de 2026` */
 function toDayMonthYear(value: Date | string): string {
   const date = parse(value);
@@ -53,5 +70,8 @@ function toDayMonthYear(value: Date | string): string {
 
 export const DateFormat = {
   toDayMonth,
-  toDayMonthYear
+  toDayMonthYear,
+  toWeekday,
+  toShortMonth,
+  toDayOfMonth
 };

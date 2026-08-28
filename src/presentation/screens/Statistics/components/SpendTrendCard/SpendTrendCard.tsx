@@ -36,7 +36,7 @@ export function SpendTrendCard({
           {Currency.format(totalAmount)}
         </AppText>
 
-        <TrendBadge change={change} />
+        {change !== null && <TrendBadge change={change} />}
       </View>
 
       <LineChart

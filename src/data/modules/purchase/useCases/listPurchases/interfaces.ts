@@ -1,3 +1,3 @@
-import type { IListPurchasesParams } from '../../types/PurchaseTypes';
+import type { ListPurchasesParamsType } from '../../types/PurchaseTypes';
 
-export type IUseListPurchasesOptions = IListPurchasesParams;
+export type IUseListPurchasesOptions = ListPurchasesParamsType;

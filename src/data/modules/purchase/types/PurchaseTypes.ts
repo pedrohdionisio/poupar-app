@@ -2,9 +2,15 @@ export type PurchaseSourceType = 'OCR' | 'MANUAL';
 
 export type MerchantCategoryType = 'SUPERMARKET' | 'OTHER';
 
-export interface IListPurchasesParams {
-  limit?: number;
-}
+/**
+ * União em vez de campos opcionais soltos porque a API recusa `from` sem `to`, e
+ * porque `limit` junto de um período cortaria o resultado em silêncio e
+ * falsearia qualquer soma. O tipo torna as duas combinações inválidas
+ * inexprimíveis.
+ */
+export type ListPurchasesParamsType =
+  | { from?: never; to?: never; limit?: number }
+  | { from: string; to: string; limit?: never };
 
 export interface IPurchaseResponse {
   id: string;

@@ -1,10 +1,7 @@
 import { ScreenLayout } from '@presentation/layouts/ScreenLayout/ScreenLayout';
-import { ScrollView, View } from 'react-native';
-import { CategorySplitCard } from './components/CategorySplitCard/CategorySplitCard';
-import { MerchantSpendCard } from './components/MerchantSpendCard/MerchantSpendCard';
+import { ScrollView } from 'react-native';
 import { PeriodFilter } from './components/PeriodFilter/PeriodFilter';
-import { PriceTrendCard } from './components/PriceTrendCard/PriceTrendCard';
-import { SpendTrendCard } from './components/SpendTrendCard/SpendTrendCard';
+import { StatisticsContent } from './components/StatisticsContent/StatisticsContent';
 import { StatisticsHeader } from './components/StatisticsHeader/StatisticsHeader';
 import { useStatisticsController } from './useStatisticsController';
 
@@ -19,16 +16,24 @@ export function Statistics() {
     priceTrend,
     totalAmount,
     totalChange,
+    isLoadingStatistics,
+    isRetrying,
+    hasStatisticsError,
+    hasStatistics,
+    errorMessage,
     chartWidth,
     contentBottomPadding,
-    handlePeriodChange
+    handlePeriodChange,
+    handleRetry
   } = useStatisticsController();
 
   return (
     <ScreenLayout edges={['top']}>
       <ScrollView
         className='px-5'
-        contentContainerStyle={{ paddingBottom: contentBottomPadding }}
+        /** `flexGrow` dá altura ao conteúdo: sem ele o `flex-1` do estado de
+         * erro não estica e a mensagem fica colada no cabeçalho. */
+        contentContainerStyle={{ flexGrow: 1, paddingBottom: contentBottomPadding }}
         showsVerticalScrollIndicator={false}
       >
         <PeriodFilter
@@ -39,33 +44,22 @@ export function Statistics() {
 
         <StatisticsHeader periodCaption={periodCaption} />
 
-        <View className='gap-4'>
-          <SpendTrendCard
-            spendSeries={spendSeries}
-            totalAmount={totalAmount}
-            change={totalChange}
-            caption={periodCaption}
-            chartWidth={chartWidth}
-          />
-
-          <CategorySplitCard
-            categorySpends={categorySpends}
-            totalAmount={totalAmount}
-            caption={periodCaption}
-          />
-
-          <MerchantSpendCard
-            merchantSpends={merchantSpends}
-            caption={periodCaption}
-            chartWidth={chartWidth}
-          />
-
-          <PriceTrendCard
-            priceTrend={priceTrend}
-            caption={periodCaption}
-            chartWidth={chartWidth}
-          />
-        </View>
+        <StatisticsContent
+          spendSeries={spendSeries}
+          categorySpends={categorySpends}
+          merchantSpends={merchantSpends}
+          priceTrend={priceTrend}
+          totalAmount={totalAmount}
+          totalChange={totalChange}
+          periodCaption={periodCaption}
+          chartWidth={chartWidth}
+          isLoading={isLoadingStatistics}
+          isRetrying={isRetrying}
+          hasError={hasStatisticsError}
+          hasStatistics={hasStatistics}
+          errorMessage={errorMessage}
+          onRetry={handleRetry}
+        />
       </ScrollView>
     </ScreenLayout>
   );
