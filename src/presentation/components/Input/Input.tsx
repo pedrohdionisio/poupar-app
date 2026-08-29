@@ -34,6 +34,7 @@ export function Input<TFieldValues extends FieldValues = FieldValues>({
   name,
   control,
   label,
+  format,
   onFocus,
   onBlur,
   ...rest
@@ -71,7 +72,7 @@ export function Input<TFieldValues extends FieldValues = FieldValues>({
         readOnly={readOnly}
         autoCorrect={false}
         value={field.value}
-        onChangeText={field.onChange}
+        onChangeText={(text) => field.onChange(format ? format(text) : text)}
         {...rest}
       />
 

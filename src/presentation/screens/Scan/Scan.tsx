@@ -18,6 +18,7 @@ export function Scan() {
     isTorchOn,
     handleBarcodeScanned,
     handleClosePress,
+    handleManualPress,
     handleToggleTorchPress,
     handleAllowPress,
     handleOpenSettingsPress
@@ -63,6 +64,7 @@ export function Scan() {
         isTorchVisible={permissionStatus === 'granted'}
         isTorchOn={isTorchOn}
         onToggleTorchPress={handleToggleTorchPress}
+        onManualPress={handleManualPress}
         onCancelPress={handleClosePress}
       />
     </ScreenLayout>

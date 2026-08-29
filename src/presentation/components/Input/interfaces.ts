@@ -13,6 +13,8 @@ export interface IInputProps<TFieldValues extends FieldValues = FieldValues>
   label: string;
   /** Ponto de troca para o `BottomSheetTextInput`. */
   InputComponent?: ComponentType<TextInputProps>;
+  /** Máscara aplicada a cada tecla, antes de o valor entrar no form. */
+  format?: (value: string) => string;
   ref?: Ref<TextInput>;
   className?: string;
 }

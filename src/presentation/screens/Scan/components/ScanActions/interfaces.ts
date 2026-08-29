@@ -3,5 +3,6 @@ export interface IScanActionsProps {
   isTorchVisible: boolean;
   isTorchOn: boolean;
   onToggleTorchPress: () => void;
+  onManualPress: () => void;
   onCancelPress: () => void;
 }

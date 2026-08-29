@@ -41,3 +41,22 @@ export interface IPurchaseReceipt {
   purchaseId: string;
   items: IPurchaseReceiptItem[];
 }
+
+export interface IImportPurchaseItem {
+  description: string;
+  /** Quantidade em unidades — o mapper converte para milésimos. */
+  quantity: number;
+  unit: ReceiptUnitType;
+  /** Preço unitário em reais — o mapper converte para centavos. */
+  unitPrice: number;
+}
+
+export interface IImportPurchasePayload {
+  /** Data da compra em ISO UTC: a API recusa data sem hora e offset local. */
+  purchasedAt: string;
+  /** Só dígitos, sem máscara. */
+  merchantCnpj: string;
+  merchantName: string;
+  merchantAddress: string;
+  items: IImportPurchaseItem[];
+}

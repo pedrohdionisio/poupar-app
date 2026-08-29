@@ -8,6 +8,11 @@ type UnitType = keyof typeof UNIT_LABELS;
 
 const MILLI_IN_ONE_UNIT = 1000;
 
+/** `2.5` -> `2500`. Arredonda porque a API só aceita inteiro. */
+function toMilli(quantity: number): number {
+  return Math.round(quantity * MILLI_IN_ONE_UNIT);
+}
+
 /** `2500` -> `2.5`. A API trafega quantidade fracionária em milésimos. */
 function fromMilli(milli: number): number {
   return milli / MILLI_IN_ONE_UNIT;
@@ -28,6 +33,7 @@ function formatWithUnit(quantity: number, unit: UnitType): string {
 
 export const Quantity = {
   fromMilli,
+  toMilli,
   format,
   formatWithUnit
 };

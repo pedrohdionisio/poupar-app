@@ -56,3 +56,26 @@ export interface IGetPurchaseReceiptResponse {
   items: IReceiptItemResponse[];
   createdAt: string;
 }
+
+export interface IImportPurchaseMerchantBody {
+  cnpj: string;
+  name: string;
+  address: string;
+}
+
+export interface IImportPurchaseItemBody {
+  seq: number;
+  description: string;
+  quantityMilli: number;
+  unit: ReceiptUnitType;
+  unitPriceCents: number;
+  totalCents: number;
+}
+
+export interface IImportPurchaseBody {
+  source: PurchaseSourceType;
+  purchasedAt: string;
+  merchant: IImportPurchaseMerchantBody;
+  totalCents: number;
+  items: IImportPurchaseItemBody[];
+}

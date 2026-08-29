@@ -68,10 +68,68 @@ function toDayMonthYear(value: Date | string): string {
   return `${date.getDate()} de ${SHORT_MONTHS[date.getMonth()] ?? ''} de ${date.getFullYear()}`;
 }
 
+const DAY_MONTH_YEAR_PATTERN = /^(\d{2})\/(\d{2})\/(\d{4})$/;
+
+/** `27042026` -> `27/04/2026`, aplicada enquanto o usuário digita. */
+function maskDayMonthYear(value: string): string {
+  const digits = value.replace(/\D/g, '').slice(0, 8);
+
+  return digits
+    .replace(/^(\d{2})(\d)/, '$1/$2')
+    .replace(/^(\d{2})\/(\d{2})(\d)/, '$1/$2/$3');
+}
+
+function parseDayMonthYear(value: string): Date | null {
+  const match = DAY_MONTH_YEAR_PATTERN.exec(value);
+
+  if (!match) return null;
+
+  const [, day, month, year] = match;
+
+  const date = new Date(Number(year), Number(month) - 1, Number(day));
+
+  /** `31/02` vira 03/03 no construtor: comparar de volta pega a data inexistente. */
+  const isRealDate =
+    date.getDate() === Number(day) && date.getMonth() === Number(month) - 1;
+
+  return isRealDate ? date : null;
+}
+
+/** `27/04/2026` é uma data válida e não está no futuro? */
+function isValidDayMonthYear(value: string): boolean {
+  const date = parseDayMonthYear(value);
+
+  if (!date) return false;
+
+  return date.getTime() <= Date.now();
+}
+
+/**
+ * `27/04/2026` -> `2026-04-27T15:00:00.000Z` (em BRT). A API exige data e hora
+ * em UTC; assumimos meio-dia local porque é o horário que não muda de dia em
+ * nenhum fuso do Brasil ao converter.
+ *
+ * Devolve `null` em data inválida em vez de cair para hoje: um util que às
+ * vezes entrega a data pedida e às vezes a de hoje não tem contrato, e este
+ * aqui vai alimentar também a importação vinda do QR da nota.
+ */
+function toIsoFromDayMonthYear(value: string): string | null {
+  const date = parseDayMonthYear(value);
+
+  if (!date) return null;
+
+  date.setHours(12, 0, 0, 0);
+
+  return date.toISOString();
+}
+
 export const DateFormat = {
   toDayMonth,
   toDayMonthYear,
   toWeekday,
   toShortMonth,
-  toDayOfMonth
+  toDayOfMonth,
+  maskDayMonthYear,
+  isValidDayMonthYear,
+  toIsoFromDayMonthYear
 };

@@ -11,6 +11,7 @@ export function ScanActions({
   isTorchVisible,
   isTorchOn,
   onToggleTorchPress,
+  onManualPress,
   onCancelPress
 }: IScanActionsProps) {
   const TorchIcon = isTorchOn ? Flashlight : FlashlightOff;
@@ -37,7 +38,9 @@ export function ScanActions({
         </Pressable>
       )}
 
-      <View className='w-full'>
+      <View className='w-full gap-1'>
+        <Button onPress={onManualPress}>Cadastrar sem escanear</Button>
+
         <Button variant='ghost' onPress={onCancelPress}>
           Cancelar
         </Button>

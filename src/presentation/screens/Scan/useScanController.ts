@@ -51,6 +51,10 @@ export function useScanController() {
     navigation.goBack();
   }
 
+  function handleManualPress() {
+    navigation.navigate('ManualPurchase');
+  }
+
   function handleClosePress() {
     navigation.goBack();
   }
@@ -72,6 +76,7 @@ export function useScanController() {
     isTorchOn,
     handleBarcodeScanned,
     handleClosePress,
+    handleManualPress,
     handleToggleTorchPress,
     handleAllowPress: askForPermission,
     handleOpenSettingsPress

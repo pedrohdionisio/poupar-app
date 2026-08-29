@@ -1,11 +1,16 @@
 import { api } from '@data/config/api';
-import type { IPurchase, IPurchaseReceipt } from '../types/Purchase';
+import type {
+  IImportPurchasePayload,
+  IPurchase,
+  IPurchaseReceipt
+} from '../types/Purchase';
 import type {
   IGetPurchaseReceiptResponse,
   IListPurchasesResponse,
   ListPurchasesParamsType
 } from '../types/PurchaseTypes';
 import { GetPurchaseReceiptMapper } from './mappers/GetPurchaseReceiptMapper';
+import { ImportPurchaseMapper } from './mappers/ImportPurchaseMapper';
 import { ListPurchasesMapper } from './mappers/ListPurchasesMapper';
 
 async function listPurchases(params: ListPurchasesParamsType): Promise<IPurchase[]> {
@@ -22,4 +27,8 @@ async function getPurchaseReceipt(purchaseId: string): Promise<IPurchaseReceipt>
   return GetPurchaseReceiptMapper.toDomain(data);
 }
 
-export const PurchaseService = { listPurchases, getPurchaseReceipt };
+async function importPurchase(payload: IImportPurchasePayload): Promise<void> {
+  await api.post('/purchases/import', ImportPurchaseMapper.toPersistence(payload));
+}
+
+export const PurchaseService = { listPurchases, getPurchaseReceipt, importPurchase };
