@@ -31,7 +31,7 @@
       [
         "expo-camera",
         {
-          "cameraPermission": "O Poupar usa a câmera para escanear o QR code das suas notas fiscais.",
+          "cameraPermission": "O Poupar usa a câmera para fotografar suas notas fiscais e importar as compras.",
           "recordAudioAndroid": false
         }
       ],

@@ -1,25 +1,17 @@
+import { COLORS } from '@shared/constants/colors';
 import { cn } from '@shared/utils/cn';
-import { useEffect, useState } from 'react';
-import { type StyleProp, View, type ViewStyle } from 'react-native';
-import Animated, {
-  Easing,
-  useAnimatedStyle,
-  useSharedValue,
-  withRepeat,
-  withTiming
-} from 'react-native-reanimated';
+import { Image, type StyleProp, View, type ViewStyle } from 'react-native';
+import Animated from 'react-native-reanimated';
 import { ScanCamera } from '../ScanCamera/ScanCamera';
 import type { IScanCameraCardProps } from './interfaces';
+import { useScanCameraCardController } from './useScanCameraCardController';
 
 const CORNER_SIZE = 34;
 const CORNER_CLASS = 'absolute border-grays-900';
 const CORNER_STYLE = { width: CORNER_SIZE, height: CORNER_SIZE };
 
-/** Ida (ou volta) da linha de leitura sobre a área da câmera. */
-const SCAN_LINE_DURATION = 2400;
-
-const cardShadow: StyleProp<ViewStyle> = {
-  shadowColor: '#0F172A',
+const CARD_SHADOW: StyleProp<ViewStyle> = {
+  shadowColor: COLORS.grays[900],
   shadowOffset: { width: 0, height: 6 },
   shadowOpacity: 0.08,
   shadowRadius: 16,
@@ -27,37 +19,32 @@ const cardShadow: StyleProp<ViewStyle> = {
 };
 
 export function ScanCameraCard({
+  cameraRef,
+  photoUri,
   isCameraActive,
   isTorchOn,
-  onBarcodeScanned
+  isProcessing
 }: IScanCameraCardProps) {
-  const [viewportHeight, setViewportHeight] = useState(0);
-  const progress = useSharedValue(0);
-
-  // A linha só se move com a câmera ligada — parada, ela sugeriria que estamos
-  // lendo algo quando não estamos.
-  useEffect(() => {
-    if (!isCameraActive) return;
-
-    progress.value = withRepeat(
-      withTiming(1, { duration: SCAN_LINE_DURATION, easing: Easing.inOut(Easing.quad) }),
-      -1,
-      true
-    );
-  }, [isCameraActive, progress]);
-
-  const scanLineStyle = useAnimatedStyle(() => ({
-    transform: [{ translateY: progress.value * viewportHeight }]
-  }));
+  const { scanLineStyle, handleViewportLayout } = useScanCameraCardController({
+    isProcessing
+  });
 
   return (
-    <View className='rounded-3xl bg-white p-5' style={cardShadow}>
+    <View className='rounded-3xl bg-white p-5' style={CARD_SHADOW}>
       <View
         className='aspect-square w-full overflow-hidden rounded-2xl bg-grays-100'
-        onLayout={({ nativeEvent }) => setViewportHeight(nativeEvent.layout.height)}
+        onLayout={handleViewportLayout}
       >
-        {isCameraActive && (
-          <ScanCamera isTorchOn={isTorchOn} onBarcodeScanned={onBarcodeScanned} />
+        {photoUri ? (
+          <Image
+            source={{ uri: photoUri }}
+            className='h-full w-full'
+            resizeMode='cover'
+            accessibilityRole='image'
+            accessibilityLabel='Foto da nota fiscal que você tirou'
+          />
+        ) : (
+          isCameraActive && <ScanCamera ref={cameraRef} isTorchOn={isTorchOn} />
         )}
 
         <View className='absolute inset-0' pointerEvents='none'>
@@ -92,7 +79,7 @@ export function ScanCameraCard({
             style={CORNER_STYLE}
           />
 
-          {isCameraActive && (
+          {isProcessing && (
             <Animated.View
               className='absolute right-0 left-0 h-0.5 bg-brand-main'
               style={scanLineStyle}

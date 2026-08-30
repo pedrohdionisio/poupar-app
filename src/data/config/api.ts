@@ -79,4 +79,11 @@ export function setRefreshTokenHandler(refreshHandler: () => Promise<void>) {
   );
 }
 
-export { api };
+/**
+ * Instância limpa para o upload assinado do S3. O `api` não serve: ele manda
+ * `Authorization` e prefixa a `baseURL`, e o S3 recusa a assinatura quando vem
+ * um header de autenticação que não é o dele.
+ */
+const uploadClient = axios.create();
+
+export { api, uploadClient };

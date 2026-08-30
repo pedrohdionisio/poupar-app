@@ -23,8 +23,8 @@ export function ScanPermissionNotice({
 
         <AppText size='sm' color='muted' align='center'>
           {canAskAgain
-            ? 'É pela câmera que lemos o QR code impresso na sua nota fiscal.'
-            : 'Libere o acesso à câmera nas configurações do seu celular para voltar a escanear suas notas.'}
+            ? 'É pela câmera que fotografamos sua nota fiscal para importar os itens.'
+            : 'Libere o acesso à câmera nas configurações do seu celular para voltar a fotografar suas notas.'}
         </AppText>
       </View>
 

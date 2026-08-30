@@ -4,24 +4,38 @@ import { StatusBar } from 'expo-status-bar';
 import { View } from 'react-native';
 import { ScanActions } from './components/ScanActions/ScanActions';
 import { ScanCameraCard } from './components/ScanCameraCard/ScanCameraCard';
+import { ScanDraftSummary } from './components/ScanDraftSummary/ScanDraftSummary';
+import { ScanFailure } from './components/ScanFailure/ScanFailure';
 import { ScanLoading } from './components/ScanLoading/ScanLoading';
 import { ScanPermissionNotice } from './components/ScanPermissionNotice/ScanPermissionNotice';
 import { ScanStepper } from './components/ScanStepper/ScanStepper';
+import { ScanSuccess } from './components/ScanSuccess/ScanSuccess';
 import { useScanController } from './useScanController';
 
 export function Scan() {
   const {
+    cameraRef,
+    phase,
+    photoUri,
     currentStep,
     permissionStatus,
     canAskAgain,
     isCameraActive,
+    isCameraPhase,
+    isProcessingPhoto,
+    isSummaryPhase,
+    isTorchVisible,
     isTorchOn,
-    handleBarcodeScanned,
-    handleClosePress,
-    handleManualPress,
-    handleToggleTorchPress,
+    caption,
+    draft,
+    confirmedScan,
+    failureMessage,
+    primaryAction,
+    secondaryActions,
+    isPrimaryLoading,
     handleAllowPress,
-    handleOpenSettingsPress
+    handleOpenSettingsPress,
+    handleToggleTorchPress
   } = useScanController();
 
   return (
@@ -37,20 +51,6 @@ export function Scan() {
       <View className='flex-1 justify-center gap-6 px-5'>
         {permissionStatus === 'checking' && <ScanLoading />}
 
-        {permissionStatus === 'granted' && (
-          <>
-            <ScanCameraCard
-              isCameraActive={isCameraActive}
-              isTorchOn={isTorchOn}
-              onBarcodeScanned={handleBarcodeScanned}
-            />
-
-            <AppText size='sm' color='muted' align='center'>
-              Posicione o QR code da sua nota fiscal dentro do quadro para escanear.
-            </AppText>
-          </>
-        )}
-
         {permissionStatus === 'denied' && (
           <ScanPermissionNotice
             canAskAgain={canAskAgain}
@@ -58,14 +58,53 @@ export function Scan() {
             onOpenSettingsPress={handleOpenSettingsPress}
           />
         )}
+
+        {permissionStatus === 'granted' && (
+          <>
+            {isCameraPhase && (
+              <>
+                <ScanCameraCard
+                  cameraRef={cameraRef}
+                  photoUri={photoUri}
+                  isCameraActive={isCameraActive}
+                  isTorchOn={isTorchOn}
+                  isProcessing={isProcessingPhoto}
+                />
+
+                {caption && (
+                  <AppText size='sm' color='muted' align='center'>
+                    {caption}
+                  </AppText>
+                )}
+              </>
+            )}
+
+            {/* A revisão continua visível durante o confirm: o spinner do
+                botão já sinaliza a espera, e trocar o resumo por outra tela
+                esconderia justamente o que o usuário acabou de aprovar. */}
+            {isSummaryPhase && draft && <ScanDraftSummary draft={draft} />}
+
+            {phase === 'done' && confirmedScan && (
+              <ScanSuccess confirmedScan={confirmedScan} />
+            )}
+
+            {phase === 'failure' && (
+              <ScanFailure
+                title={failureMessage.title}
+                description={failureMessage.description}
+              />
+            )}
+          </>
+        )}
       </View>
 
       <ScanActions
-        isTorchVisible={permissionStatus === 'granted'}
+        isTorchVisible={isTorchVisible}
         isTorchOn={isTorchOn}
         onToggleTorchPress={handleToggleTorchPress}
-        onManualPress={handleManualPress}
-        onCancelPress={handleClosePress}
+        primaryAction={primaryAction}
+        secondaryActions={secondaryActions}
+        isPrimaryLoading={isPrimaryLoading}
       />
     </ScreenLayout>
   );

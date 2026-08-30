@@ -1,8 +1,13 @@
+import type { IScanAction } from '../../interfaces';
+
 export interface IScanActionsProps {
-  /** A lanterna só faz sentido quando a câmera está de fato ativa. */
+  /** A lanterna só faz sentido com a câmera ao vivo, antes da foto. */
   isTorchVisible: boolean;
   isTorchOn: boolean;
   onToggleTorchPress: () => void;
-  onManualPress: () => void;
-  onCancelPress: () => void;
+  /** `null` nas fases em que só resta esperar. */
+  primaryAction: IScanAction | null;
+  /** Saídas alternativas da fase: cadastrar na mão, descartar, cancelar. */
+  secondaryActions: IScanAction[];
+  isPrimaryLoading: boolean;
 }

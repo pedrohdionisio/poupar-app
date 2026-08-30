@@ -11,8 +11,9 @@ export function ScanActions({
   isTorchVisible,
   isTorchOn,
   onToggleTorchPress,
-  onManualPress,
-  onCancelPress
+  primaryAction,
+  secondaryActions,
+  isPrimaryLoading
 }: IScanActionsProps) {
   const TorchIcon = isTorchOn ? Flashlight : FlashlightOff;
 
@@ -39,11 +40,29 @@ export function ScanActions({
       )}
 
       <View className='w-full gap-1'>
-        <Button onPress={onManualPress}>Cadastrar sem escanear</Button>
+        {/* Só o primário trava durante a espera: o secundário é a saída de um
+            upload lento, e desabilitá-lo junto deixaria a tela sem escape. */}
+        {primaryAction && (
+          <Button
+            onPress={primaryAction.onPress}
+            isLoading={isPrimaryLoading}
+            disabled={isPrimaryLoading}
+            accessibilityRole='button'
+          >
+            {primaryAction.label}
+          </Button>
+        )}
 
-        <Button variant='ghost' onPress={onCancelPress}>
-          Cancelar
-        </Button>
+        {secondaryActions.map((action) => (
+          <Button
+            key={action.label}
+            variant='ghost'
+            onPress={action.onPress}
+            accessibilityRole='button'
+          >
+            {action.label}
+          </Button>
+        ))}
       </View>
     </View>
   );
