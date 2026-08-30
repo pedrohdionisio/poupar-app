@@ -20,6 +20,7 @@ export function EditNameBottomSheet({ ref }: IEditNameBottomSheetProps) {
     <BottomSheetModal
       ref={bottomSheetModalRef}
       keyboardBehavior='interactive'
+      keyboardBlurBehavior='restore'
       android_keyboardInputMode='adjustResize'
     >
       <BottomSheetView style={{ paddingBottom: bottom + 24, paddingHorizontal: 24 }}>

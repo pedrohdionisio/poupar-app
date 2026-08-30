@@ -23,7 +23,7 @@ export function SignUpBottomSheet({ ref }: ISignUpBottomSheetProps) {
   const { isSubmitting } = form.formState;
 
   return (
-    <BottomSheetModal ref={bottomSheetModalRef}>
+    <BottomSheetModal ref={bottomSheetModalRef} keyboardBlurBehavior='restore'>
       <BottomSheetView style={{ paddingBottom: bottom, paddingHorizontal: 24 }}>
         <AppText size='2xl' className='mb-2'>
           Crie sua conta

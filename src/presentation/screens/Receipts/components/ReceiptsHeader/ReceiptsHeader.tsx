@@ -7,7 +7,7 @@ export function ReceiptsHeader() {
   const { user } = useAuth();
 
   return (
-    <View className='gap-1 px-5 pt-2 pb-6'>
+    <View className='gap-1 px-5 pt-8 pb-6'>
       <AppText variant='title' size='xl' color='strong' numberOfLines={1}>
         Olá, {user?.name}
       </AppText>

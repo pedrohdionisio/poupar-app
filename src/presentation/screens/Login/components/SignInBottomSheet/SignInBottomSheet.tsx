@@ -19,7 +19,7 @@ export function SignInBottomSheet({ ref }: ISignInBottomSheetProps) {
   const { isSubmitting } = form.formState;
 
   return (
-    <BottomSheetModal ref={bottomSheetModalRef}>
+    <BottomSheetModal ref={bottomSheetModalRef} keyboardBlurBehavior='restore'>
       <BottomSheetView style={{ paddingBottom: bottom, paddingHorizontal: 24 }}>
         <AppText size='2xl' className='mb-2'>
           Informe seus dados

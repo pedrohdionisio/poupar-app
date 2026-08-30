@@ -72,6 +72,7 @@ export function MerchantFormBottomSheet({ ref, onSaved }: IMerchantFormBottomShe
     <BottomSheetModal
       ref={bottomSheetModalRef}
       keyboardBehavior='interactive'
+      keyboardBlurBehavior='restore'
       android_keyboardInputMode='adjustResize'
     >
       <BottomSheetView

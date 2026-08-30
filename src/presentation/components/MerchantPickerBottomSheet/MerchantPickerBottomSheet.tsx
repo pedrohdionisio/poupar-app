@@ -30,6 +30,7 @@ export function MerchantPickerBottomSheet({
       ref={bottomSheetModalRef}
       snapPoints={[SHEET_HEIGHT]}
       keyboardBehavior='interactive'
+      keyboardBlurBehavior='restore'
       android_keyboardInputMode='adjustResize'
     >
       <BottomSheetView

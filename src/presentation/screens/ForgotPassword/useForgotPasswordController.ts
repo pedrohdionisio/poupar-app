@@ -35,8 +35,13 @@ export function useForgotPasswordController() {
     }
   }
 
+  function handleBackPress() {
+    navigation.goBack();
+  }
+
   return {
     form,
-    handleSubmit: form.handleSubmit(onSubmit)
+    handleSubmit: form.handleSubmit(onSubmit),
+    handleBackPress
   };
 }

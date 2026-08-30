@@ -1,6 +1,5 @@
 import { AppText } from '@presentation/components/AppText/AppText';
 import { Button } from '@presentation/components/Button/Button';
-import { ScreenLayout } from '@presentation/layouts/ScreenLayout/ScreenLayout';
 import { COLORS } from '@shared/constants/colors';
 import { Pencil } from 'lucide-react-native';
 import { Pressable, View } from 'react-native';
@@ -20,7 +19,7 @@ export function Profile() {
   } = useProfileController();
 
   return (
-    <ScreenLayout edges={['top']}>
+    <View className='flex-1'>
       <ProfileHeader />
 
       <View
@@ -59,6 +58,6 @@ export function Profile() {
       </View>
 
       <EditNameBottomSheet ref={editNameBottomSheetRef} />
-    </ScreenLayout>
+    </View>
   );
 }

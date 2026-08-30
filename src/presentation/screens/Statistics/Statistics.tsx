@@ -1,5 +1,4 @@
-import { ScreenLayout } from '@presentation/layouts/ScreenLayout/ScreenLayout';
-import { ScrollView } from 'react-native';
+import { ScrollView, View } from 'react-native';
 import { PeriodFilter } from './components/PeriodFilter/PeriodFilter';
 import { StatisticsContent } from './components/StatisticsContent/StatisticsContent';
 import { StatisticsHeader } from './components/StatisticsHeader/StatisticsHeader';
@@ -28,7 +27,7 @@ export function Statistics() {
   } = useStatisticsController();
 
   return (
-    <ScreenLayout edges={['top']}>
+    <View className='flex-1'>
       <ScrollView
         className='px-5'
         /** `flexGrow` dá altura ao conteúdo: sem ele o `flex-1` do estado de
@@ -61,6 +60,6 @@ export function Statistics() {
           onRetry={handleRetry}
         />
       </ScrollView>
-    </ScreenLayout>
+    </View>
   );
 }

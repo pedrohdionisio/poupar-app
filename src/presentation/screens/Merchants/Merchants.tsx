@@ -1,6 +1,6 @@
 import { MerchantFormBottomSheet } from '@presentation/components/MerchantFormBottomSheet/MerchantFormBottomSheet';
 import { SearchInput } from '@presentation/components/SearchInput/SearchInput';
-import { ScreenLayout } from '@presentation/layouts/ScreenLayout/ScreenLayout';
+import { View } from 'react-native';
 import { MerchantsContent } from './components/MerchantsContent/MerchantsContent';
 import { MerchantsHeader } from './components/MerchantsHeader/MerchantsHeader';
 import { useMerchantsController } from './useMerchantsController';
@@ -27,7 +27,7 @@ export function Merchants() {
   } = useMerchantsController();
 
   return (
-    <ScreenLayout edges={['top']}>
+    <View className='flex-1'>
       <MerchantsHeader onCreatePress={handleCreatePress} />
 
       <SearchInput
@@ -56,6 +56,6 @@ export function Merchants() {
       />
 
       <MerchantFormBottomSheet ref={merchantFormRef} />
-    </ScreenLayout>
+    </View>
   );
 }

@@ -43,7 +43,6 @@ export interface ICategorySpend {
 
 export interface IMerchantSpend {
   id: string;
-  /** Nome curto: precisa caber no rótulo do eixo X. */
   name: string;
   amount: number;
 }

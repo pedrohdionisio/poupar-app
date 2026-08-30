@@ -63,11 +63,7 @@ export function StatisticsContent({
         caption={periodCaption}
       />
 
-      <MerchantSpendCard
-        merchantSpends={merchantSpends}
-        caption={periodCaption}
-        chartWidth={chartWidth}
-      />
+      <MerchantSpendCard merchantSpends={merchantSpends} caption={periodCaption} />
 
       {/* Menos de dois pontos de preço não formam linha. */}
       {priceTrend && (

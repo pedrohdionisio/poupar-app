@@ -1,4 +1,4 @@
-import { ScreenLayout } from '@presentation/layouts/ScreenLayout/ScreenLayout';
+import { View } from 'react-native';
 import { ReceiptsContent } from './components/ReceiptsContent/ReceiptsContent';
 import { ReceiptsHeader } from './components/ReceiptsHeader/ReceiptsHeader';
 import { useReceiptsController } from './useReceiptsController';
@@ -17,7 +17,7 @@ export function Receipts() {
   } = useReceiptsController();
 
   return (
-    <ScreenLayout edges={['top']}>
+    <View className='flex-1'>
       <ReceiptsHeader />
 
       <ReceiptsContent
@@ -31,6 +31,6 @@ export function Receipts() {
         onReceiptPress={handleReceiptPress}
         onRetry={handleRetry}
       />
-    </ScreenLayout>
+    </View>
   );
 }

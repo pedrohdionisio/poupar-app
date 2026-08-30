@@ -3,7 +3,7 @@ import { View } from 'react-native';
 
 export function ProfileHeader() {
   return (
-    <View className='gap-1 px-5 pt-2 pb-5'>
+    <View className='gap-1 px-5 pt-8 pb-5'>
       <AppText variant='title' size='xl' color='strong'>
         Perfil
       </AppText>

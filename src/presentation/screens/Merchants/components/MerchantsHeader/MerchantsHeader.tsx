@@ -8,7 +8,7 @@ const CREATE_HIT_SLOP = 8;
 
 export function MerchantsHeader({ onCreatePress }: IMerchantsHeaderProps) {
   return (
-    <View className='flex-row items-start gap-4 px-5 pt-2 pb-5'>
+    <View className='flex-row items-start gap-4 px-5 pt-8 pb-5'>
       <View className='flex-1 gap-1'>
         <AppText variant='title' size='xl' color='strong'>
           Estabelecimentos
