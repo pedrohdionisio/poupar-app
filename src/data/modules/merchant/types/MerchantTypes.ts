@@ -1,27 +1,32 @@
 export type MerchantCategoryType = 'SUPERMARKET' | 'OTHER';
 
-export interface IAccountMerchantResponse {
+export interface IMerchantResponse {
+  id: string;
   accountId: string;
-  merchantCnpj: string;
-  alias: string | null;
   name: string;
   category: MerchantCategoryType;
+  /** Só dígitos; `null` quando o usuário não informou. */
+  cnpj: string | null;
   purchaseCount: number;
   totalSpentCents: number;
-  firstPurchaseAt: string;
-  lastPurchaseAt: string;
+  /** `null` enquanto o estabelecimento não tiver nenhuma compra. */
+  firstPurchaseAt: string | null;
+  lastPurchaseAt: string | null;
+  lastAppliedPurchaseId: string | null;
   createdAt: string;
   updatedAt: string;
 }
 
-export type IListAccountMerchantsResponse = IAccountMerchantResponse[];
+export type IListMerchantsResponse = IMerchantResponse[];
 
-export interface IUpdateAccountMerchantAliasPayload {
-  cnpj: string;
-  /** `null` limpa o apelido: a API recusa string vazia (`z.string().min(1)`). */
-  alias: string | null;
+/** `POST` e `PUT` aceitam exatamente o mesmo corpo. */
+export interface ISaveMerchantBody {
+  name: string;
+  category: MerchantCategoryType;
+  /** `null` limpa o CNPJ: a API recusa string vazia (`regex` de 14 dígitos). */
+  cnpj: string | null;
 }
 
-export interface IUpdateAccountMerchantAliasBody {
-  alias: string | null;
+export interface ICreateMerchantResponse {
+  id: string;
 }

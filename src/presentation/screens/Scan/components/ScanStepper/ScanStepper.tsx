@@ -7,6 +7,7 @@ import type { ScanStep } from '../../interfaces';
 import type { IScanStepperProps } from './interfaces';
 
 const STEPS: { id: ScanStep; label: string }[] = [
+  { id: 'merchant', label: 'Local' },
   { id: 'scan', label: 'Escanear' },
   { id: 'process', label: 'Processar' },
   { id: 'done', label: 'Concluído' }

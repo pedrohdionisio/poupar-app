@@ -1,3 +1,5 @@
+import type { IMerchant } from '@data/modules/merchant/types/Merchant';
+import { useListMerchants } from '@data/modules/merchant/useCases/listMerchants/useListMerchants';
 import {
   getScanErrorMessage,
   getScanFailureMessage
@@ -7,6 +9,7 @@ import type { ScanContentType } from '@data/modules/scan/types/ScanTypes';
 import { useConfirmScan } from '@data/modules/scan/useCases/confirmScan/useConfirmScan';
 import { useGetScan } from '@data/modules/scan/useCases/getScan/useGetScan';
 import { useSendScanPhoto } from '@data/modules/scan/useCases/sendScanPhoto/useSendScanPhoto';
+import type { IMerchantFormBottomSheet } from '@presentation/components/MerchantFormBottomSheet/interfaces';
 import { useIsFocused, useNavigation } from '@react-navigation/native';
 import type { AppStackNavigationProps } from '@shared/navigation/AppStack';
 import { useCameraPermissions } from 'expo-camera';
@@ -33,16 +36,31 @@ export function useScanController() {
   const isFocused = useIsFocused();
 
   const cameraRef = useRef<IScanCamera>(null);
+  const merchantFormRef = useRef<IMerchantFormBottomSheet>(null);
   const hasRequestedPermissionRef = useRef(false);
 
   const [permission, requestPermission] = useCameraPermissions();
   const [isRequestingPermission, setIsRequestingPermission] = useState(false);
   const [isTorchOn, setIsTorchOn] = useState(false);
+  /**
+   * Dois estados de propósito: `selectedMerchantId` é o que está marcado na
+   * lista e `merchantId` é o que o usuário confirmou. Sem a separação, tocar
+   * num item já jogaria a tela para a câmera, sem chance de revisar a escolha.
+   */
+  const [selectedMerchantId, setSelectedMerchantId] = useState<string | null>(null);
+  const [merchantId, setMerchantId] = useState<string | null>(null);
   const [photoUri, setPhotoUri] = useState<string | null>(null);
   const [scanId, setScanId] = useState<string | null>(null);
   const [isSendingPhoto, setIsSendingPhoto] = useState(false);
   const [hasTimedOut, setHasTimedOut] = useState(false);
   const [confirmedScan, setConfirmedScan] = useState<IConfirmedScan | null>(null);
+
+  /**
+   * Mesma query que o seletor consome — o React Query serve as duas da mesma
+   * entrada de cache. Ela vive aqui para o nome do estabelecimento sobreviver à
+   * desmontagem do seletor, já que o resumo da nota precisa exibi-lo.
+   */
+  const { merchants } = useListMerchants();
 
   const { sendScanPhoto } = useSendScanPhoto();
   const { confirmScan, isConfirmingScan } = useConfirmScan();
@@ -78,6 +96,7 @@ export function useScanController() {
     isSendingPhoto,
     hasTimedOut,
     hasScanError,
+    hasMerchant: Boolean(merchantId),
     scan,
     scanId
   });
@@ -90,6 +109,31 @@ export function useScanController() {
     return () => clearTimeout(timeoutId);
   }, [phase]);
 
+  function handleMerchantSelect(merchant: IMerchant) {
+    setSelectedMerchantId(merchant.id);
+  }
+
+  function handleCreateMerchantPress() {
+    merchantFormRef.current?.open();
+  }
+
+  /** O recém-cadastrado já entra marcado: foi para usá-lo que o sheet abriu. */
+  function handleMerchantSaved(savedMerchantId: string) {
+    setSelectedMerchantId(savedMerchantId);
+  }
+
+  function handleContinuePress() {
+    /** O botão fica desabilitado sem escolha; a guarda é para o tipo. */
+    if (!selectedMerchantId) return;
+
+    setMerchantId(selectedMerchantId);
+  }
+
+  function handleChangeMerchantPress() {
+    setMerchantId(null);
+  }
+
+  /** Repetir a foto não pede o estabelecimento de novo: ele continua valendo. */
   function handleRetryPress() {
     setPhotoUri(null);
     setScanId(null);
@@ -98,6 +142,9 @@ export function useScanController() {
   }
 
   async function handleTakePhotoPress() {
+    /** A fase de captura só existe com o estabelecimento confirmado. */
+    if (!merchantId) return;
+
     setIsSendingPhoto(true);
 
     try {
@@ -114,6 +161,7 @@ export function useScanController() {
       setIsTorchOn(false);
 
       const createdScanId = await sendScanPhoto({
+        merchantId,
         photoUri: uri,
         contentType: PHOTO_CONTENT_TYPE
       });
@@ -177,6 +225,11 @@ export function useScanController() {
     hasTimedOut
   });
 
+  const continueAction: IScanAction = {
+    label: 'Continuar',
+    onPress: handleContinuePress,
+    isDisabled: !selectedMerchantId
+  };
   const takePhotoAction: IScanAction = {
     label: 'Tirar foto da nota',
     onPress: handleTakePhotoPress
@@ -195,10 +248,15 @@ export function useScanController() {
     label: 'Cadastrar sem escanear',
     onPress: handleManualPress
   };
+  const changeMerchantAction: IScanAction = {
+    label: 'Trocar estabelecimento',
+    onPress: handleChangeMerchantPress
+  };
   const cancelAction: IScanAction = { label: 'Cancelar', onPress: handleClosePress };
   const discardAction: IScanAction = { label: 'Descartar', onPress: handleClosePress };
 
   const primaryActionByPhase: Record<ScanPhase, IScanAction | null> = {
+    merchant: continueAction,
     capture: takePhotoAction,
     /** Mantém o botão no lugar, agora girando: some-lo faria a tela pular. */
     sending: takePhotoAction,
@@ -210,7 +268,8 @@ export function useScanController() {
   };
 
   const secondaryActionsByPhase: Record<ScanPhase, IScanAction[]> = {
-    capture: [manualAction, cancelAction],
+    merchant: [cancelAction],
+    capture: [changeMerchantAction, manualAction, cancelAction],
     sending: [cancelAction],
     processing: [cancelAction],
     review: [discardAction],
@@ -221,12 +280,15 @@ export function useScanController() {
 
   return {
     cameraRef,
+    merchantFormRef,
     phase,
     photoUri,
     currentStep: getScanStep(phase),
     permissionStatus,
     canAskAgain: permission?.canAskAgain ?? false,
+    selectedMerchantId,
     isCameraActive: isFocused && permissionStatus === 'granted' && !photoUri,
+    isMerchantPhase: phase === 'merchant',
     isCameraPhase: isCameraPhase(phase),
     /**
      * A foto é o que está sendo lido: a linha de leitura sobre a câmera ao vivo
@@ -239,6 +301,7 @@ export function useScanController() {
     isTorchOn,
     caption: SCAN_PHASE_CAPTION[phase],
     draft: scan?.draft ?? null,
+    merchantName: merchants?.find((merchant) => merchant.id === merchantId)?.name ?? null,
     confirmedScan,
     failureMessage,
     /** Sem permissão a tela não tem fluxo: a única saída é fechar o modal. */
@@ -248,6 +311,9 @@ export function useScanController() {
     isPrimaryLoading: isSendingPhoto || isConfirmingScan,
     handleAllowPress: askForPermission,
     handleOpenSettingsPress,
-    handleToggleTorchPress
+    handleToggleTorchPress,
+    handleMerchantSelect,
+    handleCreateMerchantPress,
+    handleMerchantSaved
   };
 }

@@ -1,10 +1,14 @@
 import { AppText } from '@presentation/components/AppText/AppText';
+import { Button } from '@presentation/components/Button/Button';
 import { COLORS } from '@shared/constants/colors';
 import { SearchX, Store } from 'lucide-react-native';
 import { View } from 'react-native';
 import type { IMerchantsListEmptyProps } from './interfaces';
 
-export function MerchantsListEmpty({ searchTerm }: IMerchantsListEmptyProps) {
+export function MerchantsListEmpty({
+  searchTerm,
+  onCreatePress
+}: IMerchantsListEmptyProps) {
   const isSearching = !!searchTerm.trim();
 
   const Icon = isSearching ? SearchX : Store;
@@ -14,8 +18,8 @@ export function MerchantsListEmpty({ searchTerm }: IMerchantsListEmptyProps) {
     : 'Nenhum estabelecimento ainda';
 
   const description = isSearching
-    ? `Não achamos nada para "${searchTerm.trim()}". Tente outro nome.`
-    : 'Escaneie uma nota para os lugares onde você compra aparecerem aqui.';
+    ? `Não achamos nada para "${searchTerm.trim()}". Tente outro nome ou cadastre um novo.`
+    : 'Cadastre onde você costuma comprar para começar a registrar suas notas.';
 
   return (
     <View className='items-center gap-3 py-12'>
@@ -32,6 +36,8 @@ export function MerchantsListEmpty({ searchTerm }: IMerchantsListEmptyProps) {
           {description}
         </AppText>
       </View>
+
+      <Button onPress={onCreatePress}>Cadastrar estabelecimento</Button>
     </View>
   );
 }

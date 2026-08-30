@@ -1,22 +1,18 @@
-import {
-  MERCHANT_ADDRESS_MAX_LENGTH,
-  MERCHANT_NAME_MAX_LENGTH
-} from '@data/modules/purchase/useCases/importPurchase/schemas/importPurchaseSchema';
 import { AppText } from '@presentation/components/AppText/AppText';
 import { Button } from '@presentation/components/Button/Button';
 import { Input } from '@presentation/components/Input/Input';
+import { MerchantFormBottomSheet } from '@presentation/components/MerchantFormBottomSheet/MerchantFormBottomSheet';
+import { MerchantPickerBottomSheet } from '@presentation/components/MerchantPickerBottomSheet/MerchantPickerBottomSheet';
 import { ScreenLayout } from '@presentation/layouts/ScreenLayout/ScreenLayout';
-import { Cnpj } from '@shared/utils/cnpj';
 import { DateFormat } from '@shared/utils/date';
 import { ScrollView, View } from 'react-native';
 import { ManualPurchaseHeader } from './components/ManualPurchaseHeader/ManualPurchaseHeader';
 import { ManualPurchaseItemForm } from './components/ManualPurchaseItemForm/ManualPurchaseItemForm';
 import { ManualPurchaseTotal } from './components/ManualPurchaseTotal/ManualPurchaseTotal';
+import { MerchantField } from './components/MerchantField/MerchantField';
 import { useManualPurchaseController } from './useManualPurchaseController';
 
-/** Comprimento das máscaras, com separadores: `00.000.000/0000-00`, `dd/mm/aaaa`. */
-const CNPJ_MASK_LENGTH = 18;
-
+/** Comprimento da máscara de data, com separadores: `dd/mm/aaaa`. */
 const PURCHASED_AT_MASK_LENGTH = 10;
 
 const HORIZONTAL_PADDING = 20;
@@ -26,11 +22,19 @@ const CONTENT_BOTTOM_SPACING = 32;
 export function ManualPurchase() {
   const {
     form,
+    merchantPickerRef,
+    merchantFormRef,
+    merchantId,
+    merchantName,
     itemFields,
     totalAmount,
     itemsCount,
     isImportingPurchase,
     handleSubmit,
+    handleMerchantFieldPress,
+    handleMerchantSelect,
+    handleCreateMerchantPress,
+    handleMerchantSaved,
     handleAddItemPress,
     handleRemoveItemPress,
     handleClosePress
@@ -53,32 +57,10 @@ export function ManualPurchase() {
             Estabelecimento
           </AppText>
 
-          <Input
-            name='merchantCnpj'
+          <MerchantField
             control={form.control}
-            label='CNPJ'
-            placeholder='00.000.000/0000-00'
-            keyboardType='number-pad'
-            maxLength={CNPJ_MASK_LENGTH}
-            format={Cnpj.mask}
-          />
-
-          <Input
-            name='merchantName'
-            control={form.control}
-            label='Nome'
-            placeholder='Ex.: Mercado da esquina'
-            autoCapitalize='sentences'
-            maxLength={MERCHANT_NAME_MAX_LENGTH}
-          />
-
-          <Input
-            name='merchantAddress'
-            control={form.control}
-            label='Endereço'
-            placeholder='Ex.: Rua das Flores, 123 - Centro'
-            autoCapitalize='sentences'
-            maxLength={MERCHANT_ADDRESS_MAX_LENGTH}
+            merchantName={merchantName}
+            onPress={handleMerchantFieldPress}
           />
 
           <Input
@@ -130,6 +112,15 @@ export function ManualPurchase() {
           </Button>
         </View>
       </ScrollView>
+
+      <MerchantPickerBottomSheet
+        ref={merchantPickerRef}
+        selectedMerchantId={merchantId}
+        onSelect={handleMerchantSelect}
+        onCreatePress={handleCreateMerchantPress}
+      />
+
+      <MerchantFormBottomSheet ref={merchantFormRef} onSaved={handleMerchantSaved} />
     </ScreenLayout>
   );
 }

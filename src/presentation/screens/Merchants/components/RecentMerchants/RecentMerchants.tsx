@@ -22,7 +22,7 @@ export function RecentMerchants({ merchants, onMerchantPress }: IRecentMerchants
       <FlatList
         className='-mx-5'
         data={merchants}
-        keyExtractor={(merchant: IMerchant) => merchant.cnpj}
+        keyExtractor={(merchant: IMerchant) => merchant.id}
         renderItem={({ item }) => (
           <RecentMerchantCard merchant={item} onPress={onMerchantPress} />
         )}

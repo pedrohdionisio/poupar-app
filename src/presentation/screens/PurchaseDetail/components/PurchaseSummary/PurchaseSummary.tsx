@@ -1,5 +1,4 @@
 import { AppText } from '@presentation/components/AppText/AppText';
-import { Cnpj } from '@shared/utils/cnpj';
 import { Currency } from '@shared/utils/currency';
 import { DateFormat } from '@shared/utils/date';
 import { View } from 'react-native';
@@ -8,15 +7,8 @@ import { PurchaseInfoRow } from '../PurchaseInfoRow/PurchaseInfoRow';
 import type { IPurchaseSummaryProps } from './interfaces';
 
 export function PurchaseSummary({ purchase }: IPurchaseSummaryProps) {
-  const {
-    merchantName,
-    merchantCnpj,
-    purchasedAt,
-    category,
-    source,
-    totalAmount,
-    discountAmount
-  } = purchase;
+  const { merchantName, purchasedAt, category, source, totalAmount, discountAmount } =
+    purchase;
 
   const hasDiscount = discountAmount > 0;
 
@@ -38,8 +30,6 @@ export function PurchaseSummary({ purchase }: IPurchaseSummaryProps) {
 
       <View className='rounded-2xl border border-grays-200 px-4 py-2'>
         <PurchaseInfoRow label='Data' value={DateFormat.toDayMonthYear(purchasedAt)} />
-
-        <PurchaseInfoRow label='CNPJ' value={Cnpj.format(merchantCnpj)} />
 
         <PurchaseInfoRow label='Categoria' value={getCategoryLabel(category)} />
 

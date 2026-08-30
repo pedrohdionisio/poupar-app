@@ -18,7 +18,9 @@ export function MerchantsContent({
   hasError,
   errorMessage,
   bottomPadding,
+  onCreatePress,
   onEditPress,
+  onDeletePress,
   onRetry
 }: IMerchantsContentProps) {
   if (isLoading) {
@@ -41,7 +43,9 @@ export function MerchantsContent({
       merchants={filteredMerchants}
       searchTerm={searchTerm}
       bottomPadding={bottomPadding}
+      onCreatePress={onCreatePress}
       onEditPress={onEditPress}
+      onDeletePress={onDeletePress}
       ListHeaderComponent={
         /** Sem nada na lista, o cabeçalho anunciaria uma seção que não existe. */
         hasMerchants ? (

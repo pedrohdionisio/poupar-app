@@ -2,10 +2,10 @@ import { useQuery } from '@tanstack/react-query';
 import { MerchantQueryKeys } from '../../keys/MerchantKeys';
 import { MerchantService } from '../../services/MerchantService';
 
-export function useListAccountMerchants() {
+export function useListMerchants() {
   const { data, refetch, isLoading, isFetching, isError, error } = useQuery({
-    queryKey: [MerchantQueryKeys.LIST_ACCOUNT_MERCHANTS],
-    queryFn: MerchantService.listAccountMerchants
+    queryKey: [MerchantQueryKeys.LIST_MERCHANTS],
+    queryFn: MerchantService.listMerchants
   });
 
   return {

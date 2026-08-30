@@ -1,15 +1,33 @@
+import type { ICreateMerchantResponse, MerchantCategoryType } from './MerchantTypes';
+
 /**
- * Separado de `MerchantTypes.ts` de propósito: lá vive o espelho da API; aqui
- * vive o que a UI consome, já traduzido pelo mapper.
+ * Separado de `MerchantTypes.ts` de propósito: lá vive o espelho da API, em
+ * centavos; aqui vive o que a UI consome, já traduzido pelo mapper.
  */
 export interface IMerchant {
-  /** O CNPJ é a identidade: a API não expõe id próprio para o vínculo. */
-  cnpj: string;
-  /** Nome como apareceu na nota fiscal. */
+  /** O ULID é a identidade desde que o estabelecimento passou a ser da conta. */
+  id: string;
   name: string;
-  /** Apelido dado pelo usuário; quando vazio, exibimos `name`. */
-  alias: string | null;
+  category: MerchantCategoryType;
+  /** Só dígitos, como a API devolve; `null` quando não informado. */
+  cnpj: string | null;
   purchasesCount: number;
-  /** Data da última compra, em ISO. */
-  lastPurchaseAt: string;
+  /** Total gasto em reais. */
+  totalSpent: number;
+  /** `null` enquanto não houver nenhuma compra. */
+  lastPurchaseAt: string | null;
 }
+
+export interface ICreateMerchantPayload {
+  name: string;
+  category: MerchantCategoryType;
+  /** Com ou sem máscara, e vazio quando não informado: o mapper resolve. */
+  cnpj: string;
+}
+
+export interface IUpdateMerchantPayload extends ICreateMerchantPayload {
+  merchantId: string;
+}
+
+/** O endpoint só devolve o id gerado: o domínio é o próprio espelho. */
+export type ICreatedMerchant = ICreateMerchantResponse;

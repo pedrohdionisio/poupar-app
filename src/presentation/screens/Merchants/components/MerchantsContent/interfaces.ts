@@ -11,6 +11,8 @@ export interface IMerchantsContentProps {
   hasError: boolean;
   errorMessage: string;
   bottomPadding: number;
+  onCreatePress: () => void;
   onEditPress: (merchant: IMerchant) => void;
+  onDeletePress: (merchant: IMerchant) => void;
   onRetry: () => void;
 }

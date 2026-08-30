@@ -12,7 +12,7 @@ export interface IAccountProductResponse {
   minPriceCents: number;
   maxPriceCents: number;
   lastPurchaseAt: string;
-  lastMerchantCnpj: string;
+  lastMerchantId: string;
   purchaseCount: number;
   createdAt: string;
   updatedAt: string;
@@ -29,7 +29,7 @@ export interface IPricePointResponse {
   productKey: string;
   purchaseId: string;
   purchasedAt: string;
-  merchantCnpj: string;
+  merchantId: string;
   unitPriceCents: number;
   quantityMilli: number;
   unit: ProductUnitType;

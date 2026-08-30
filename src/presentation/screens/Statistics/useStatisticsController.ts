@@ -1,4 +1,4 @@
-import { useListAccountMerchants } from '@data/modules/merchant/useCases/listAccountMerchants/useListAccountMerchants';
+import { useListMerchants } from '@data/modules/merchant/useCases/listMerchants/useListMerchants';
 import { useListAccountProducts } from '@data/modules/product/useCases/listAccountProducts/useListAccountProducts';
 import { useListPricePoints } from '@data/modules/product/useCases/listPricePoints/useListPricePoints';
 import { getPurchaseErrorMessage } from '@data/modules/purchase/constants/purchaseErrorMessages';
@@ -63,7 +63,7 @@ export function useStatisticsController() {
     hasPurchasesError: hasPreviousPurchasesError
   } = useListPurchases(previousRange);
 
-  const { merchants, loadMerchants } = useListAccountMerchants();
+  const { merchants, loadMerchants } = useListMerchants();
 
   const { products, loadProducts } = useListAccountProducts();
 

@@ -10,8 +10,8 @@ import type {
  */
 export interface IPurchase {
   id: string;
+  merchantId: string;
   merchantName: string;
-  merchantCnpj: string;
   purchasedAt: string;
   category: MerchantCategoryType;
   source: PurchaseSourceType;
@@ -54,9 +54,6 @@ export interface IImportPurchaseItem {
 export interface IImportPurchasePayload {
   /** Data da compra em ISO UTC: a API recusa data sem hora e offset local. */
   purchasedAt: string;
-  /** Só dígitos, sem máscara. */
-  merchantCnpj: string;
-  merchantName: string;
-  merchantAddress: string;
+  merchantId: string;
   items: IImportPurchaseItem[];
 }

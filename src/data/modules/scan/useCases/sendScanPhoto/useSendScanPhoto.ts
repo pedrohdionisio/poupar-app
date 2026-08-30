@@ -12,8 +12,11 @@ import type { ISendScanPhotoPayload } from './interfaces';
 export function useSendScanPhoto() {
   const { mutateAsync, isPending } = useMutation({
     mutationKey: [ScanMutationKeys.SEND_SCAN_PHOTO],
-    mutationFn: async ({ photoUri, contentType }: ISendScanPhotoPayload) => {
-      const { scanId, uploadSignature } = await ScanService.createScan({ contentType });
+    mutationFn: async ({ merchantId, photoUri, contentType }: ISendScanPhotoPayload) => {
+      const { scanId, uploadSignature } = await ScanService.createScan({
+        merchantId,
+        contentType
+      });
 
       await ScanService.uploadScanPhoto({ uploadSignature, photoUri, contentType });
 

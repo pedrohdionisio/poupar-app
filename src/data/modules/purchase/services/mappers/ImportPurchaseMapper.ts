@@ -47,11 +47,7 @@ function toPersistence(payload: IImportPurchasePayload): IImportPurchaseBody {
   return {
     source: 'MANUAL',
     purchasedAt: payload.purchasedAt,
-    merchant: {
-      cnpj: payload.merchantCnpj,
-      name: payload.merchantName.trim(),
-      address: payload.merchantAddress.trim()
-    },
+    merchantId: payload.merchantId,
     totalCents: items.reduce((total, item) => total + item.totalCents, 0),
     items
   };

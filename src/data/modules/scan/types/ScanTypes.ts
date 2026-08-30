@@ -24,6 +24,8 @@ export type ScanProviderType = 'GEMINI' | 'MANUAL';
 export type ScanContentType = 'image/jpeg' | 'image/png';
 
 export interface ICreateScanPayload {
+  /** O estabelecimento é escolhido antes da foto e fica preso ao scan. */
+  merchantId: string;
   contentType: ScanContentType;
 }
 
@@ -38,16 +40,12 @@ export interface ICreateScanResponse {
   uploadSignature: IUploadSignatureResponse;
 }
 
-export interface IScanDraftMerchantResponse {
-  cnpj: string;
-  name: string;
-  fantasyName: string | null;
-  address: string;
-}
-
 export interface IScanDraftItemResponse {
   seq: number;
+  /** Texto cru lido da nota. */
   description: string;
+  /** Nome resolvido pela extração contra o catálogo de produtos da conta. */
+  displayName: string;
   merchantCode: string | null;
   gtin: string | null;
   /** Quantidade em milésimos: `2500` é 2,5. */
@@ -61,7 +59,6 @@ export interface IScanDraftItemResponse {
 export interface IScanDraftResponse {
   purchasedAt: string;
   accessKey: string | null;
-  merchant: IScanDraftMerchantResponse;
   totalCents: number;
   discountCents: number;
   items: IScanDraftItemResponse[];
@@ -70,6 +67,7 @@ export interface IScanDraftResponse {
 export interface IGetScanResponse {
   id: string;
   accountId: string;
+  merchantId: string;
   status: ScanStatusType;
   provider: ScanProviderType;
   draft: IScanDraftResponse | null;

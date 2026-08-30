@@ -46,7 +46,7 @@ export function ScanActions({
           <Button
             onPress={primaryAction.onPress}
             isLoading={isPrimaryLoading}
-            disabled={isPrimaryLoading}
+            disabled={isPrimaryLoading || primaryAction.isDisabled}
             accessibilityRole='button'
           >
             {primaryAction.label}

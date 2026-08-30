@@ -178,21 +178,24 @@ export function buildMerchantSpends(
 ): IMerchantSpend[] {
   const totals = new Map<string, { name: string; amount: number }>();
 
-  for (const { merchantCnpj, merchantName, totalAmount } of purchases) {
-    const current = totals.get(merchantCnpj);
+  for (const { merchantId, merchantName, totalAmount } of purchases) {
+    const current = totals.get(merchantId);
 
-    totals.set(merchantCnpj, {
+    totals.set(merchantId, {
       name: current?.name ?? merchantName,
       amount: (current?.amount ?? 0) + totalAmount
     });
   }
 
   return [...totals.entries()]
-    .map(([cnpj, { name, amount }]) => {
-      /** O apelido é o nome curto que cabe no eixo X; a razão social não cabe. */
-      const alias = merchants.find((merchant) => merchant.cnpj === cnpj)?.alias;
+    .map(([id, { name, amount }]) => {
+      /**
+       * A compra guarda o nome do momento da importação. O da lista é o atual —
+       * renomear o estabelecimento precisa refletir no gráfico.
+       */
+      const currentName = merchants.find((merchant) => merchant.id === id)?.name;
 
-      return { id: cnpj, name: alias?.trim() || name, amount };
+      return { id, name: currentName ?? name, amount };
     })
     .sort((a, b) => b.amount - a.amount)
     .slice(0, MERCHANT_SPEND_LIMIT);

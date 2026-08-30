@@ -4,14 +4,15 @@
  */
 export type ScanPermissionStatus = 'checking' | 'granted' | 'denied';
 
-/** Etapas exibidas no stepper, da foto até a nota importada. */
-export type ScanStep = 'scan' | 'process' | 'done';
+/** Etapas exibidas no stepper, do estabelecimento até a nota importada. */
+export type ScanStep = 'merchant' | 'scan' | 'process' | 'done';
 
 /**
  * Fase do fluxo dentro da tela. Mais fina que `ScanStep`: três fases distintas
  * (`sending`, `processing`, `confirming`) vivem sob o mesmo passo `process`.
  */
 export type ScanPhase =
+  | 'merchant'
   | 'capture'
   | 'sending'
   | 'processing'
@@ -23,4 +24,6 @@ export type ScanPhase =
 export interface IScanAction {
   label: string;
   onPress: () => void;
+  /** O botão fica no lugar, inerte, enquanto a fase não tem o que ele precisa. */
+  isDisabled?: boolean;
 }

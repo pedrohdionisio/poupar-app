@@ -1,21 +1,12 @@
-import type {
-  MerchantCategoryType,
-  PurchaseSourceType
-} from '@data/modules/purchase/types/PurchaseTypes';
-
-const CATEGORY_LABELS: Record<MerchantCategoryType, string> = {
-  SUPERMARKET: 'Supermercado',
-  OTHER: 'Outros'
-};
+import { getMerchantCategoryLabel } from '@data/modules/merchant/constants/merchantCategories';
+import type { PurchaseSourceType } from '@data/modules/purchase/types/PurchaseTypes';
 
 const SOURCE_LABELS: Record<PurchaseSourceType, string> = {
   OCR: 'Nota escaneada',
   MANUAL: 'Lançamento manual'
 };
 
-export function getCategoryLabel(category: MerchantCategoryType): string {
-  return CATEGORY_LABELS[category];
-}
+export { getMerchantCategoryLabel as getCategoryLabel };
 
 export function getSourceLabel(source: PurchaseSourceType): string {
   return SOURCE_LABELS[source];

@@ -11,6 +11,7 @@ function toPersistenceItem(item: IScanDraftItem): IScanDraftItemResponse {
   return {
     seq: item.seq,
     description: item.description,
+    displayName: item.displayName,
     merchantCode: item.merchantCode,
     gtin: item.gtin,
     quantityMilli: Quantity.toMilli(item.quantity),
@@ -22,15 +23,15 @@ function toPersistenceItem(item: IScanDraftItem): IScanDraftItemResponse {
 }
 
 /**
- * O corpo é o mesmo draft que a API extraiu. Ele é remontado a partir do
- * domínio, e não ecoado da resposta, porque é o domínio que a tela segura — a
- * regra do projeto é que a tradução centavos↔reais aconteça só aqui.
+ * O corpo é o mesmo draft que a API extraiu — sem o estabelecimento, que ficou
+ * preso ao scan na criação. Ele é remontado a partir do domínio, e não ecoado
+ * da resposta, porque é o domínio que a tela segura: a regra do projeto é que a
+ * tradução centavos↔reais aconteça só aqui.
  */
 function toPersistence(draft: IScanDraft): IConfirmScanBody {
   return {
     purchasedAt: draft.purchasedAt,
     accessKey: draft.accessKey,
-    merchant: draft.merchant,
     totalCents: Money.toCents(draft.totalAmount),
     discountCents: Money.toCents(draft.discountAmount),
     items: draft.items.map(toPersistenceItem)

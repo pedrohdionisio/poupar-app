@@ -1,6 +1,5 @@
 import { AppText } from '@presentation/components/AppText/AppText';
 import { COLORS } from '@shared/constants/colors';
-import { Cnpj } from '@shared/utils/cnpj';
 import { Currency } from '@shared/utils/currency';
 import { DateFormat } from '@shared/utils/date';
 import { CircleCheck } from 'lucide-react-native';
@@ -26,7 +25,7 @@ function SummaryRow({ label, value }: ISummaryRowProps) {
   );
 }
 
-export function ScanDraftSummary({ draft }: IScanDraftSummaryProps) {
+export function ScanDraftSummary({ draft, merchantName }: IScanDraftSummaryProps) {
   const itemsLabel = draft.items.length === 1 ? 'item' : 'itens';
 
   return (
@@ -46,13 +45,18 @@ export function ScanDraftSummary({ draft }: IScanDraftSummaryProps) {
       </View>
 
       <View className='gap-3 rounded-2xl border border-grays-200 p-5'>
-        <AppText variant='title' size='md' color='strong'>
-          {draft.merchant.fantasyName ?? draft.merchant.name}
-        </AppText>
+        {/* O estabelecimento vem da escolha do primeiro passo, não da leitura
+            da nota: a API prende o scan a ele antes mesmo da foto subir. */}
+        {merchantName && (
+          <>
+            <AppText variant='title' size='md' color='strong'>
+              {merchantName}
+            </AppText>
 
-        <View className='h-px bg-grays-200' />
+            <View className='h-px bg-grays-200' />
+          </>
+        )}
 
-        <SummaryRow label='CNPJ' value={Cnpj.format(draft.merchant.cnpj)} />
         <SummaryRow label='Data' value={DateFormat.toDayMonthYear(draft.purchasedAt)} />
         <SummaryRow label='Itens' value={`${draft.items.length} ${itemsLabel}`} />
 

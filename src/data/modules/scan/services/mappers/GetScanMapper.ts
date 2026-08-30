@@ -11,6 +11,7 @@ function toDomainItem(item: IScanDraftItemResponse) {
   return {
     seq: item.seq,
     description: item.description,
+    displayName: item.displayName,
     merchantCode: item.merchantCode,
     gtin: item.gtin,
     quantity: Quantity.fromMilli(item.quantityMilli),
@@ -25,7 +26,6 @@ function toDomainDraft(draft: IScanDraftResponse): IScanDraft {
   return {
     purchasedAt: draft.purchasedAt,
     accessKey: draft.accessKey,
-    merchant: draft.merchant,
     totalAmount: Money.fromCents(draft.totalCents),
     discountAmount: Money.fromCents(draft.discountCents),
     items: draft.items.map(toDomainItem)
@@ -35,6 +35,7 @@ function toDomainDraft(draft: IScanDraftResponse): IScanDraft {
 function toDomain(response: IGetScanResponse): IScan {
   return {
     id: response.id,
+    merchantId: response.merchantId,
     status: response.status,
     draft: response.draft ? toDomainDraft(response.draft) : null,
     purchaseId: response.purchaseId,

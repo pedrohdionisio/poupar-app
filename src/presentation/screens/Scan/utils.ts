@@ -7,6 +7,8 @@ interface IGetScanPhaseParams {
   isSendingPhoto: boolean;
   hasTimedOut: boolean;
   hasScanError: boolean;
+  /** O `POST /scans` exige o estabelecimento: sem ele a câmera nem abre. */
+  hasMerchant: boolean;
   scan: IScan | undefined;
   scanId: string | null;
 }
@@ -21,6 +23,7 @@ export function getScanPhase({
   isSendingPhoto,
   hasTimedOut,
   hasScanError,
+  hasMerchant,
   scan,
   scanId
 }: IGetScanPhaseParams): ScanPhase {
@@ -30,12 +33,14 @@ export function getScanPhase({
   if (scan?.status === 'AWAITING_REVIEW' && scan.draft) return 'review';
   if (isSendingPhoto) return 'sending';
   if (scanId) return 'processing';
+  if (!hasMerchant) return 'merchant';
 
   return 'capture';
 }
 
 /** Uma falha não volta o stepper: ela para no passo em que aconteceu. */
 export function getScanStep(phase: ScanPhase): ScanStep {
+  if (phase === 'merchant') return 'merchant';
   if (phase === 'capture') return 'scan';
   if (phase === 'done') return 'done';
 

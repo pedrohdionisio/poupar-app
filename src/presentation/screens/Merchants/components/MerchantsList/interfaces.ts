@@ -7,6 +7,8 @@ export interface IMerchantsListProps {
   searchTerm: string;
   /** Espaço extra no fim da lista, já que a tab bar flutua sobre o conteúdo. */
   bottomPadding: number;
+  onCreatePress: () => void;
   onEditPress: (merchant: IMerchant) => void;
+  onDeletePress: (merchant: IMerchant) => void;
   ListHeaderComponent?: ReactElement;
 }

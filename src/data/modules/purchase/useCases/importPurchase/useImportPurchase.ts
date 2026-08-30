@@ -19,7 +19,7 @@ export function useImportPurchase() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [PurchaseQueryKeys.LIST_PURCHASES] });
       queryClient.invalidateQueries({
-        queryKey: [MerchantQueryKeys.LIST_ACCOUNT_MERCHANTS]
+        queryKey: [MerchantQueryKeys.LIST_MERCHANTS]
       });
       queryClient.invalidateQueries({
         queryKey: [ProductQueryKeys.LIST_ACCOUNT_PRODUCTS]

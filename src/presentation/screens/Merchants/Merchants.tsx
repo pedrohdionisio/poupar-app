@@ -1,13 +1,13 @@
+import { MerchantFormBottomSheet } from '@presentation/components/MerchantFormBottomSheet/MerchantFormBottomSheet';
+import { SearchInput } from '@presentation/components/SearchInput/SearchInput';
 import { ScreenLayout } from '@presentation/layouts/ScreenLayout/ScreenLayout';
-import { EditMerchantBottomSheet } from './components/EditMerchantBottomSheet/EditMerchantBottomSheet';
 import { MerchantsContent } from './components/MerchantsContent/MerchantsContent';
 import { MerchantsHeader } from './components/MerchantsHeader/MerchantsHeader';
-import { MerchantsSearchInput } from './components/MerchantsSearchInput/MerchantsSearchInput';
 import { useMerchantsController } from './useMerchantsController';
 
 export function Merchants() {
   const {
-    editBottomSheetRef,
+    merchantFormRef,
     searchTerm,
     recentMerchants,
     filteredMerchants,
@@ -20,16 +20,20 @@ export function Merchants() {
     listBottomPadding,
     handleSearchChange,
     handleClearSearch,
+    handleCreatePress,
     handleEditPress,
+    handleDeletePress,
     handleRetry
   } = useMerchantsController();
 
   return (
     <ScreenLayout edges={['top']}>
-      <MerchantsHeader />
+      <MerchantsHeader onCreatePress={handleCreatePress} />
 
-      <MerchantsSearchInput
+      <SearchInput
+        className='mx-5 mb-6'
         value={searchTerm}
+        placeholder='Buscar estabelecimento'
         onChangeText={handleSearchChange}
         onClear={handleClearSearch}
       />
@@ -45,11 +49,13 @@ export function Merchants() {
         hasError={hasMerchantsError}
         errorMessage={errorMessage}
         bottomPadding={listBottomPadding}
+        onCreatePress={handleCreatePress}
         onEditPress={handleEditPress}
+        onDeletePress={handleDeletePress}
         onRetry={handleRetry}
       />
 
-      <EditMerchantBottomSheet ref={editBottomSheetRef} />
+      <MerchantFormBottomSheet ref={merchantFormRef} />
     </ScreenLayout>
   );
 }

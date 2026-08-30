@@ -1,3 +1,5 @@
+import type { IMerchant } from '@data/modules/merchant/types/Merchant';
+import { useListMerchants } from '@data/modules/merchant/useCases/listMerchants/useListMerchants';
 import { getPurchaseErrorMessage } from '@data/modules/purchase/constants/purchaseErrorMessages';
 import { ImportPurchaseMapper } from '@data/modules/purchase/services/mappers/ImportPurchaseMapper';
 import {
@@ -6,11 +8,13 @@ import {
 } from '@data/modules/purchase/useCases/importPurchase/schemas/importPurchaseSchema';
 import { useImportPurchase } from '@data/modules/purchase/useCases/importPurchase/useImportPurchase';
 import { zodResolver } from '@hookform/resolvers/zod';
+import type { IMerchantFormBottomSheet } from '@presentation/components/MerchantFormBottomSheet/interfaces';
+import type { IMerchantPickerBottomSheet } from '@presentation/components/MerchantPickerBottomSheet/interfaces';
 import { useNavigation } from '@react-navigation/native';
 import type { AppStackNavigationProps } from '@shared/navigation/AppStack';
-import { Cnpj } from '@shared/utils/cnpj';
 import { DateFormat } from '@shared/utils/date';
 import { Decimal } from '@shared/utils/decimal';
+import { useRef } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { Alert } from 'react-native';
 
@@ -24,15 +28,19 @@ const EMPTY_ITEM = {
 export function useManualPurchaseController() {
   const navigation = useNavigation<AppStackNavigationProps>();
 
+  const merchantPickerRef = useRef<IMerchantPickerBottomSheet>(null);
+  const merchantFormRef = useRef<IMerchantFormBottomSheet>(null);
+
+  /** Mesma entrada de cache que o seletor consome: serve só para o rótulo. */
+  const { merchants } = useListMerchants();
+
   const { importPurchase, isImportingPurchase } = useImportPurchase();
 
   const form = useForm<ImportPurchaseFormType>({
     resolver: zodResolver(importPurchaseSchema),
     defaultValues: {
       purchasedAt: '',
-      merchantCnpj: '',
-      merchantName: '',
-      merchantAddress: '',
+      merchantId: '',
       items: [{ ...EMPTY_ITEM }]
     }
   });
@@ -43,6 +51,7 @@ export function useManualPurchaseController() {
   });
 
   const items = form.watch('items');
+  const merchantId = form.watch('merchantId');
 
   /**
    * O total é derivado, não digitado: a API aceitaria uma soma divergente sem
@@ -69,9 +78,7 @@ export function useManualPurchaseController() {
     try {
       await importPurchase({
         purchasedAt,
-        merchantCnpj: Cnpj.unformat(data.merchantCnpj),
-        merchantName: data.merchantName,
-        merchantAddress: data.merchantAddress,
+        merchantId: data.merchantId,
         /** O schema valida o texto; a conversão para número mora aqui. */
         items: data.items.map((item) => ({
           description: item.description,
@@ -100,6 +107,25 @@ export function useManualPurchaseController() {
     Alert.alert('Confira os dados', 'Alguns campos precisam ser corrigidos.');
   }
 
+  function handleMerchantFieldPress() {
+    merchantPickerRef.current?.open();
+  }
+
+  function handleMerchantSelect(merchant: IMerchant) {
+    form.setValue('merchantId', merchant.id, { shouldValidate: true });
+    merchantPickerRef.current?.close();
+  }
+
+  function handleCreateMerchantPress() {
+    merchantFormRef.current?.open();
+  }
+
+  /** O recém-cadastrado já entra escolhido: foi para usá-lo que o sheet abriu. */
+  function handleMerchantSaved(savedMerchantId: string) {
+    form.setValue('merchantId', savedMerchantId, { shouldValidate: true });
+    merchantPickerRef.current?.close();
+  }
+
   function handleAddItemPress() {
     append({ ...EMPTY_ITEM });
   }
@@ -114,11 +140,19 @@ export function useManualPurchaseController() {
 
   return {
     form,
+    merchantPickerRef,
+    merchantFormRef,
+    merchantId: merchantId || null,
+    merchantName: merchants?.find((merchant) => merchant.id === merchantId)?.name ?? null,
     itemFields: fields,
     totalAmount,
     itemsCount: fields.length,
     isImportingPurchase,
     handleSubmit: form.handleSubmit(onSubmit, onInvalid),
+    handleMerchantFieldPress,
+    handleMerchantSelect,
+    handleCreateMerchantPress,
+    handleMerchantSaved,
     handleAddItemPress,
     handleRemoveItemPress,
     handleClosePress

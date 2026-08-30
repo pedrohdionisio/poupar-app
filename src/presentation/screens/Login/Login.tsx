@@ -31,7 +31,7 @@ export function Login() {
               align='center'
               className='max-w-[311px] tracking-[-0.32px]'
             >
-              Compras do dia a dia mais baratas
+              Te fazemos economizar com Inteligencia Artificial
             </AppText>
 
             <View className='mt-6 w-full p-5'>

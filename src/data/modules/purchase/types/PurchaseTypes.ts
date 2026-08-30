@@ -1,6 +1,8 @@
-export type PurchaseSourceType = 'OCR' | 'MANUAL';
+export type { MerchantCategoryType } from '@data/modules/merchant/types/MerchantTypes';
 
-export type MerchantCategoryType = 'SUPERMARKET' | 'OTHER';
+import type { MerchantCategoryType } from '@data/modules/merchant/types/MerchantTypes';
+
+export type PurchaseSourceType = 'OCR' | 'MANUAL';
 
 /**
  * União em vez de campos opcionais soltos porque a API recusa `from` sem `to`, e
@@ -18,7 +20,8 @@ export interface IPurchaseResponse {
   purchasedAt: string;
   createdAt: string;
   updatedAt: string;
-  merchantCnpj: string;
+  merchantId: string;
+  /** Cópia do nome e da categoria no instante da importação, não um join. */
   merchantName: string;
   category: MerchantCategoryType;
   totalCents: number;
@@ -35,7 +38,10 @@ export type ReceiptUnitType = 'UN' | 'KG' | 'L';
 export interface IReceiptItemResponse {
   seq: number;
   productKey: string;
+  /** Texto cru da nota. */
   description: string;
+  /** Nome já resolvido pela API — cai na `description` quando não há melhor. */
+  displayName: string;
   normalizedName: string;
   gtin: string | null;
   merchantCode: string | null;
@@ -57,12 +63,6 @@ export interface IGetPurchaseReceiptResponse {
   createdAt: string;
 }
 
-export interface IImportPurchaseMerchantBody {
-  cnpj: string;
-  name: string;
-  address: string;
-}
-
 export interface IImportPurchaseItemBody {
   seq: number;
   description: string;
@@ -75,7 +75,8 @@ export interface IImportPurchaseItemBody {
 export interface IImportPurchaseBody {
   source: PurchaseSourceType;
   purchasedAt: string;
-  merchant: IImportPurchaseMerchantBody;
+  /** O estabelecimento é escolhido antes: a API não cria mais um pela nota. */
+  merchantId: string;
   totalCents: number;
   items: IImportPurchaseItemBody[];
 }

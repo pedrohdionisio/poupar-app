@@ -8,8 +8,8 @@ import type {
 function toDomainPurchase(purchase: IPurchaseResponse): IPurchase {
   return {
     id: purchase.id,
+    merchantId: purchase.merchantId,
     merchantName: purchase.merchantName,
-    merchantCnpj: purchase.merchantCnpj,
     purchasedAt: purchase.purchasedAt,
     category: purchase.category,
     source: purchase.source,

@@ -1,14 +1,9 @@
-import { Cnpj } from '@shared/utils/cnpj';
 import { DateFormat } from '@shared/utils/date';
 import { Decimal } from '@shared/utils/decimal';
 import { Quantity } from '@shared/utils/quantity';
 import z from 'zod';
 
 /** Fonte única dos limites: os `maxLength` dos inputs leem daqui. */
-export const MERCHANT_NAME_MAX_LENGTH = 60;
-
-export const MERCHANT_ADDRESS_MAX_LENGTH = 120;
-
 export const ITEM_DESCRIPTION_MAX_LENGTH = 80;
 
 /** A API só aceita estas três unidades (`Receipt.Unit`). */
@@ -51,27 +46,11 @@ export const importPurchaseSchema = z.object({
     .string()
     .min(1, 'Campo obrigatório')
     .refine(DateFormat.isValidDayMonthYear, 'Informe uma data válida, no passado'),
-  merchantCnpj: z
-    .string()
-    .min(1, 'Campo obrigatório')
-    /** A API recusa a nota inteira por causa do CNPJ, sem dizer qual campo. */
-    .refine(Cnpj.isValid, 'CNPJ inválido'),
-  merchantName: z
-    .string()
-    .trim()
-    .min(1, 'Campo obrigatório')
-    .max(
-      MERCHANT_NAME_MAX_LENGTH,
-      `Use no máximo ${MERCHANT_NAME_MAX_LENGTH} caracteres`
-    ),
-  merchantAddress: z
-    .string()
-    .trim()
-    .min(1, 'Campo obrigatório')
-    .max(
-      MERCHANT_ADDRESS_MAX_LENGTH,
-      `Use no máximo ${MERCHANT_ADDRESS_MAX_LENGTH} caracteres`
-    ),
+  /**
+   * O estabelecimento vem escolhido da lista da conta: a API não cria mais um
+   * a partir do CNPJ digitado na nota.
+   */
+  merchantId: z.string().min(1, 'Selecione um estabelecimento'),
   items: z.array(importPurchaseItemSchema).min(1, 'Adicione pelo menos um item')
 });
 

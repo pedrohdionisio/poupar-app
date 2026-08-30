@@ -1,25 +1,48 @@
 import { api } from '@data/config/api';
-import type { IMerchant } from '../types/Merchant';
 import type {
-  IListAccountMerchantsResponse,
-  IUpdateAccountMerchantAliasPayload
+  ICreatedMerchant,
+  ICreateMerchantPayload,
+  IMerchant,
+  IUpdateMerchantPayload
+} from '../types/Merchant';
+import type {
+  ICreateMerchantResponse,
+  IListMerchantsResponse
 } from '../types/MerchantTypes';
-import { ListAccountMerchantsMapper } from './mappers/ListAccountMerchantsMapper';
-import { UpdateAccountMerchantAliasMapper } from './mappers/UpdateAccountMerchantAliasMapper';
+import { ListMerchantsMapper } from './mappers/ListMerchantsMapper';
+import { SaveMerchantMapper } from './mappers/SaveMerchantMapper';
 
-async function listAccountMerchants(): Promise<IMerchant[]> {
-  const { data } = await api.get<IListAccountMerchantsResponse>('/account-merchants');
+async function listMerchants(): Promise<IMerchant[]> {
+  const { data } = await api.get<IListMerchantsResponse>('/merchants');
 
-  return ListAccountMerchantsMapper.toDomain(data);
+  return ListMerchantsMapper.toDomain(data);
 }
 
-async function updateAccountMerchantAlias(
-  payload: IUpdateAccountMerchantAliasPayload
-): Promise<void> {
-  await api.put(
-    `/account-merchants/${payload.cnpj}`,
-    UpdateAccountMerchantAliasMapper.toPersistence(payload)
+async function createMerchant(
+  payload: ICreateMerchantPayload
+): Promise<ICreatedMerchant> {
+  const { data } = await api.post<ICreateMerchantResponse>(
+    '/merchants',
+    SaveMerchantMapper.toPersistence(payload)
   );
+
+  return data;
 }
 
-export const MerchantService = { listAccountMerchants, updateAccountMerchantAlias };
+async function updateMerchant({
+  merchantId,
+  ...payload
+}: IUpdateMerchantPayload): Promise<void> {
+  await api.put(`/merchants/${merchantId}`, SaveMerchantMapper.toPersistence(payload));
+}
+
+async function deleteMerchant(merchantId: string): Promise<void> {
+  await api.delete(`/merchants/${merchantId}`);
+}
+
+export const MerchantService = {
+  listMerchants,
+  createMerchant,
+  updateMerchant,
+  deleteMerchant
+};

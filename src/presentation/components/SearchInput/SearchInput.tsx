@@ -1,25 +1,34 @@
 import { COLORS } from '@shared/constants/colors';
+import { cn } from '@shared/utils/cn';
 import { Search, X } from 'lucide-react-native';
 import { Pressable, TextInput, View } from 'react-native';
-import type { IMerchantsSearchInputProps } from './interfaces';
+import type { ISearchInputProps } from './interfaces';
 
 const CLEAR_HIT_SLOP = 12;
 
-export function MerchantsSearchInput({
+export function SearchInput({
   value,
+  placeholder,
   onChangeText,
-  onClear
-}: IMerchantsSearchInputProps) {
+  onClear,
+  InputComponent = TextInput,
+  className
+}: ISearchInputProps) {
   return (
-    <View className='mx-5 mb-6 h-12 flex-row items-center gap-2 rounded-xl border border-grays-200 bg-grays-100 px-3'>
+    <View
+      className={cn(
+        'h-12 flex-row items-center gap-2 rounded-xl border border-grays-200 bg-grays-100 px-3',
+        className
+      )}
+    >
       <Search size={18} color={COLORS.grays[400]} strokeWidth={2} />
 
-      <TextInput
+      <InputComponent
         value={value}
         onChangeText={onChangeText}
-        placeholder='Buscar estabelecimento'
+        placeholder={placeholder}
         placeholderTextColor={COLORS.grays[400]}
-        accessibilityLabel='Buscar estabelecimento'
+        accessibilityLabel={placeholder}
         returnKeyType='search'
         autoCapitalize='none'
         autoCorrect={false}

@@ -14,19 +14,27 @@ export function MerchantsList({
   merchants,
   searchTerm,
   bottomPadding,
+  onCreatePress,
   onEditPress,
+  onDeletePress,
   ListHeaderComponent
 }: IMerchantsListProps) {
   return (
     <FlatList
       data={merchants}
-      keyExtractor={(merchant: IMerchant) => merchant.cnpj}
+      keyExtractor={(merchant: IMerchant) => merchant.id}
       renderItem={({ item }) => (
-        <MerchantListItem merchant={item} onEditPress={onEditPress} />
+        <MerchantListItem
+          merchant={item}
+          onEditPress={onEditPress}
+          onDeletePress={onDeletePress}
+        />
       )}
       ItemSeparatorComponent={MerchantsListSeparator}
       ListHeaderComponent={ListHeaderComponent}
-      ListEmptyComponent={<MerchantsListEmpty searchTerm={searchTerm} />}
+      ListEmptyComponent={
+        <MerchantsListEmpty searchTerm={searchTerm} onCreatePress={onCreatePress} />
+      }
       keyboardShouldPersistTaps='handled'
       keyboardDismissMode='on-drag'
       showsVerticalScrollIndicator={false}

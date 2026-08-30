@@ -9,7 +9,12 @@ import type {
 function toDomainItem(item: IReceiptItemResponse): IPurchaseReceiptItem {
   return {
     seq: item.seq,
-    description: item.description,
+    /**
+     * O `displayName` é o nome que a API também grava no catálogo de produtos.
+     * Mostrar a `description` crua faria o mesmo item aparecer com dois nomes
+     * diferentes entre a nota e a lista de produtos.
+     */
+    description: item.displayName,
     quantity: Quantity.fromMilli(item.quantityMilli),
     unit: item.unit,
     unitPrice: Money.fromCents(item.unitPriceCents),
