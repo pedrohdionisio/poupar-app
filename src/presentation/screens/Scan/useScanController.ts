@@ -13,14 +13,32 @@ import type { IMerchantFormBottomSheet } from '@presentation/components/Merchant
 import { useIsFocused, useNavigation } from '@react-navigation/native';
 import type { AppStackNavigationProps } from '@shared/navigation/AppStack';
 import { useCameraPermissions } from 'expo-camera';
+import * as ImagePicker from 'expo-image-picker';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Alert, Linking } from 'react-native';
 import type { IScanCamera } from './components/ScanCamera/interfaces';
 import type { IScanAction, ScanPermissionStatus, ScanPhase } from './interfaces';
-import { getScanPhase, getScanStep, isCameraPhase, SCAN_PHASE_CAPTION } from './utils';
+import {
+  getScanContentType,
+  getScanPhase,
+  getScanStep,
+  isCameraPhase,
+  SCAN_PHASE_CAPTION
+} from './utils';
 
 /** A câmera nativa entrega JPEG; `imageType` só vale na web. */
 const PHOTO_CONTENT_TYPE: ScanContentType = 'image/jpeg';
+
+/**
+ * `compatible` faz o iOS transcodificar o HEIC da galeria para JPEG. Sem isso a
+ * foto sobe no formato original, que a API não assina — e o upload é recusado
+ * pelo S3 depois do usuário já ter escolhido a imagem.
+ */
+const GALLERY_PICKER_OPTIONS: ImagePicker.ImagePickerOptions = {
+  mediaTypes: 'images',
+  preferredAssetRepresentationMode:
+    ImagePicker.UIImagePickerPreferredAssetRepresentationMode.Compatible
+};
 
 /**
  * Uma tentativa da lambda `processScan` tem timeout de 180s na poupar-api, e
@@ -141,6 +159,28 @@ export function useScanController() {
     setConfirmedScan(null);
   }
 
+  /**
+   * Onde a câmera e a galeria se encontram: de onde a foto veio não muda nada
+   * daqui para a frente — ela sobe, vira scan e o polling assume.
+   */
+  async function uploadPhoto(
+    uri: string,
+    contentType: ScanContentType,
+    photoMerchantId: string
+  ) {
+    setPhotoUri(uri);
+    /** Lanterna acesa com a câmera já desmontada só esquenta o aparelho. */
+    setIsTorchOn(false);
+
+    const createdScanId = await sendScanPhoto({
+      merchantId: photoMerchantId,
+      photoUri: uri,
+      contentType
+    });
+
+    setScanId(createdScanId);
+  }
+
   async function handleTakePhotoPress() {
     /** A fase de captura só existe com o estabelecimento confirmado. */
     if (!merchantId) return;
@@ -156,17 +196,44 @@ export function useScanController() {
         return;
       }
 
-      setPhotoUri(uri);
-      /** Lanterna acesa com a câmera já desmontada só esquenta o aparelho. */
-      setIsTorchOn(false);
+      await uploadPhoto(uri, PHOTO_CONTENT_TYPE, merchantId);
+    } catch (error) {
+      setPhotoUri(null);
 
-      const createdScanId = await sendScanPhoto({
-        merchantId,
-        photoUri: uri,
-        contentType: PHOTO_CONTENT_TYPE
-      });
+      Alert.alert(
+        'Oops!',
+        getScanErrorMessage(error, 'Não foi possível enviar a foto da nota')
+      );
+    } finally {
+      setIsSendingPhoto(false);
+    }
+  }
 
-      setScanId(createdScanId);
+  async function handlePickFromGalleryPress() {
+    /** Mesma exigência da câmera: o scan nasce preso ao estabelecimento. */
+    if (!merchantId) return;
+
+    const result = await ImagePicker.launchImageLibraryAsync(GALLERY_PICKER_OPTIONS);
+
+    /** Desistir da escolha não é erro: a tela fica exatamente como estava. */
+    if (result.canceled) return;
+
+    const asset = result.assets.at(0);
+
+    if (!asset) return;
+
+    const contentType = getScanContentType(asset.mimeType);
+
+    if (!contentType) {
+      Alert.alert('Oops!', 'Escolha uma imagem em JPG ou PNG.');
+
+      return;
+    }
+
+    setIsSendingPhoto(true);
+
+    try {
+      await uploadPhoto(asset.uri, contentType, merchantId);
     } catch (error) {
       setPhotoUri(null);
 
@@ -299,6 +366,7 @@ export function useScanController() {
     isSummaryPhase: phase === 'review' || phase === 'confirming',
     isTorchVisible: permissionStatus === 'granted' && phase === 'capture',
     isTorchOn,
+    isGalleryVisible: permissionStatus === 'granted' && phase === 'capture',
     caption: SCAN_PHASE_CAPTION[phase],
     draft: scan?.draft ?? null,
     merchantName: merchants?.find((merchant) => merchant.id === merchantId)?.name ?? null,
@@ -312,6 +380,7 @@ export function useScanController() {
     handleAllowPress: askForPermission,
     handleOpenSettingsPress,
     handleToggleTorchPress,
+    handlePickFromGalleryPress,
     handleMerchantSelect,
     handleCreateMerchantPress,
     handleMerchantSaved

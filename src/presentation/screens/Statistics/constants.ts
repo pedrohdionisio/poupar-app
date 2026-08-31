@@ -46,3 +46,6 @@ export const CATEGORY_LABELS: Record<MerchantCategoryType, string> = {
 
 /** Quantas barras cabem no card de "onde você mais gasta". */
 export const MERCHANT_SPEND_LIMIT = 5;
+
+/** Quantos rótulos cabem no eixo do preço sem as datas se encavalarem. */
+export const PRICE_TREND_MAX_LABELS = 6;

@@ -3,7 +3,12 @@ import type { IAccountProduct, IPricePoint } from '@data/modules/product/types/P
 import type { IPurchase } from '@data/modules/purchase/types/Purchase';
 import type { MerchantCategoryType } from '@data/modules/purchase/types/PurchaseTypes';
 import { DateFormat } from '@shared/utils/date';
-import { CATEGORY_LABELS, MERCHANT_SPEND_LIMIT, PERIOD_CONFIGS } from './constants';
+import {
+  CATEGORY_LABELS,
+  MERCHANT_SPEND_LIMIT,
+  PERIOD_CONFIGS,
+  PRICE_TREND_MAX_LABELS
+} from './constants';
 import type {
   ICategorySpend,
   IDateRange,
@@ -96,16 +101,16 @@ export function getPreviousPeriodRange(periodId: TPeriodId, reference: Date): ID
   return { from: from.toISOString(), to: to.toISOString() };
 }
 
-function getBucketLabel(bucket: IBucket, config: IPeriodConfig): string {
+function getDateLabel(date: Date, config: IPeriodConfig): string {
   if (config.labelKind === 'weekday') {
-    return DateFormat.toWeekday(bucket.start);
+    return DateFormat.toWeekday(date);
   }
 
   if (config.labelKind === 'dayOfMonth') {
-    return DateFormat.toDayOfMonth(bucket.start);
+    return DateFormat.toDayOfMonth(date);
   }
 
-  return DateFormat.toShortMonth(bucket.start);
+  return DateFormat.toShortMonth(date);
 }
 
 export function buildSpendSeries(
@@ -132,7 +137,7 @@ export function buildSpendSeries(
 
   return buckets.map((bucket, index) => ({
     /** Rótulo vazio esconde o texto sem tirar o ponto do gráfico. */
-    label: index % config.labelEvery === 0 ? getBucketLabel(bucket, config) : '',
+    label: index % config.labelEvery === 0 ? getDateLabel(bucket.start, config) : '',
     amount: bucket.amount
   }));
 }
@@ -209,20 +214,45 @@ export function getMostPurchasedProduct(
 }
 
 /**
- * Usa o histórico inteiro do produto, não o recorte do período: em `7 dias`
- * quase nunca há dois pontos, e o card sumia da tela sem explicação. Por isso a
- * legenda deste card fala de histórico, não do período selecionado.
+ * Um ponto por compra, não uma média por mês. Comprar o mesmo item duas vezes
+ * na mesma semana já é uma comparação de preço — e era justamente essa, a mais
+ * comum, que a média mensal apagava ao colapsar as duas num ponto só.
+ *
+ * O eixo é a sequência de compras, não o calendário: dois pontos vizinhos podem
+ * estar a um dia ou a dois meses de distância. É o rótulo de data que diz qual.
  */
 export function buildPriceTrend(
   product: IAccountProduct | undefined,
-  pricePoints: IPricePoint[]
+  pricePoints: IPricePoint[],
+  periodId: TPeriodId,
+  range: IDateRange
 ): IPriceTrend | null {
-  if (!product || pricePoints.length < 2) {
+  if (!product) {
     return null;
   }
 
+  const config = PERIOD_CONFIGS[periodId];
+
+  const from = new Date(range.from);
+  const to = new Date(range.to);
+
+  /**
+   * A rota `/price-points` não aceita intervalo: ela devolve o histórico
+   * inteiro do produto, e o recorte do período é feito aqui.
+   */
+  const periodPoints = pricePoints
+    .map((pricePoint) => ({ ...pricePoint, date: new Date(pricePoint.purchasedAt) }))
+    .filter(({ date }) => date >= from && date <= to)
+    .sort((a, b) => a.date.getTime() - b.date.getTime());
+
+  const labelEvery = Math.ceil(periodPoints.length / PRICE_TREND_MAX_LABELS);
+
   return {
     productName: product.name,
-    prices: pricePoints.map(({ unitPrice }) => unitPrice)
+    points: periodPoints.map(({ date, unitPrice }, index) => ({
+      /** Rótulo vazio esconde o texto sem tirar o ponto do gráfico. */
+      label: index % labelEvery === 0 ? getDateLabel(date, config) : '',
+      price: unitPrice
+    }))
   };
 }

@@ -1,4 +1,5 @@
 import type { IScan } from '@data/modules/scan/types/Scan';
+import type { ScanContentType } from '@data/modules/scan/types/ScanTypes';
 import type { ScanPhase, ScanStep } from './interfaces';
 
 interface IGetScanPhaseParams {
@@ -57,4 +58,17 @@ export const SCAN_PHASE_CAPTION: Partial<Record<ScanPhase, string>> = {
 /** As fases que mostram a foto (ou a câmera) no card, com legenda embaixo. */
 export function isCameraPhase(phase: ScanPhase): boolean {
   return phase === 'capture' || phase === 'sending' || phase === 'processing';
+}
+
+/**
+ * O content-type vai assinado no presigned POST do S3: subir um arquivo que não
+ * bate com o que foi assinado é rejeitado no upload. A câmera sempre entrega
+ * JPEG, mas a galeria devolve o que estiver lá — daí a conferência.
+ */
+export function getScanContentType(mimeType: string | undefined): ScanContentType | null {
+  if (mimeType === 'image/jpeg' || mimeType === 'image/png') {
+    return mimeType;
+  }
+
+  return null;
 }

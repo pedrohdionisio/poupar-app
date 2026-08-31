@@ -1,11 +1,14 @@
 import { ScrollView, View } from 'react-native';
 import { PeriodFilter } from './components/PeriodFilter/PeriodFilter';
+import { ProductPickerBottomSheet } from './components/ProductPickerBottomSheet/ProductPickerBottomSheet';
 import { StatisticsContent } from './components/StatisticsContent/StatisticsContent';
 import { StatisticsHeader } from './components/StatisticsHeader/StatisticsHeader';
 import { useStatisticsController } from './useStatisticsController';
 
 export function Statistics() {
   const {
+    productPickerRef,
+    selectedProductKey,
     periodOptions,
     selectedPeriodId,
     periodCaption,
@@ -23,6 +26,8 @@ export function Statistics() {
     chartWidth,
     contentBottomPadding,
     handlePeriodChange,
+    handleProductPress,
+    handleProductSelect,
     handleRetry
   } = useStatisticsController();
 
@@ -58,8 +63,15 @@ export function Statistics() {
           hasStatistics={hasStatistics}
           errorMessage={errorMessage}
           onRetry={handleRetry}
+          onProductPress={handleProductPress}
         />
       </ScrollView>
+
+      <ProductPickerBottomSheet
+        ref={productPickerRef}
+        selectedProductKey={selectedProductKey}
+        onSelect={handleProductSelect}
+      />
     </View>
   );
 }

@@ -1,12 +1,14 @@
 import { useListMerchants } from '@data/modules/merchant/useCases/listMerchants/useListMerchants';
+import type { IAccountProduct } from '@data/modules/product/types/Product';
 import { useListAccountProducts } from '@data/modules/product/useCases/listAccountProducts/useListAccountProducts';
 import { useListPricePoints } from '@data/modules/product/useCases/listPricePoints/useListPricePoints';
 import { getPurchaseErrorMessage } from '@data/modules/purchase/constants/purchaseErrorMessages';
 import type { IPurchase } from '@data/modules/purchase/types/Purchase';
 import { useListPurchases } from '@data/modules/purchase/useCases/listPurchases/useListPurchases';
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { useWindowDimensions } from 'react-native';
+import type { IProductPickerBottomSheet } from './components/ProductPickerBottomSheet/interfaces';
 import { DEFAULT_PERIOD_ID, PERIOD_CAPTIONS, PERIOD_OPTIONS } from './constants';
 import type { TPeriodId } from './interfaces';
 import {
@@ -33,10 +35,14 @@ const ERROR_FALLBACK = 'Verifique sua conexão e tente de novo.';
 const EMPTY_PURCHASES: IPurchase[] = [];
 
 export function useStatisticsController() {
+  const productPickerRef = useRef<IProductPickerBottomSheet>(null);
+
   const { width } = useWindowDimensions();
   const tabBarHeight = useBottomTabBarHeight();
 
   const [selectedPeriodId, setSelectedPeriodId] = useState<TPeriodId>(DEFAULT_PERIOD_ID);
+  /** `null` até o usuário escolher: o padrão é derivado, não copiado no estado. */
+  const [selectedProductKey, setSelectedProductKey] = useState<string | null>(null);
 
   /**
    * Sem memo de propósito: `getPeriodRange` trunca a janela em unidades
@@ -67,13 +73,22 @@ export function useStatisticsController() {
 
   const { products, loadProducts } = useListAccountProducts();
 
-  const featuredProduct = useMemo(
-    () => getMostPurchasedProduct(products ?? []),
-    [products]
-  );
+  /**
+   * Sem escolha, o card abre no item mais comprado — é o que o usuário mais tem
+   * a ganhar acompanhando. Derivar em vez de guardar no estado evita a cópia
+   * ficar apontando para um produto que sumiu da lista.
+   */
+  const selectedProduct = useMemo(() => {
+    const allProducts = products ?? [];
+
+    return (
+      allProducts.find((product) => product.productKey === selectedProductKey) ??
+      getMostPurchasedProduct(allProducts)
+    );
+  }, [products, selectedProductKey]);
 
   const { pricePoints, loadPricePoints } = useListPricePoints({
-    productKey: featuredProduct?.productKey
+    productKey: selectedProduct?.productKey
   });
 
   const periodPurchases = purchases ?? EMPTY_PURCHASES;
@@ -112,13 +127,32 @@ export function useStatisticsController() {
     [periodPurchases, merchants]
   );
 
+  /**
+   * Depende das duas strings, não do objeto: `range` é recriado a cada render,
+   * e memoizar por ele não memoizaria nada. As strings só mudam quando o dia
+   * (ou o mês) vira — é o mesmo motivo que deixa a query key estável.
+   */
+  const { from: rangeFrom, to: rangeTo } = range;
+
   const priceTrend = useMemo(
-    () => buildPriceTrend(featuredProduct, pricePoints ?? []),
-    [featuredProduct, pricePoints]
+    () =>
+      buildPriceTrend(selectedProduct, pricePoints ?? [], selectedPeriodId, {
+        from: rangeFrom,
+        to: rangeTo
+      }),
+    [selectedProduct, pricePoints, selectedPeriodId, rangeFrom, rangeTo]
   );
 
   function handlePeriodChange(periodId: TPeriodId) {
     setSelectedPeriodId(periodId);
+  }
+
+  function handleProductPress() {
+    productPickerRef.current?.open();
+  }
+
+  function handleProductSelect(product: IAccountProduct) {
+    setSelectedProductKey(product.productKey);
   }
 
   /**
@@ -134,6 +168,8 @@ export function useStatisticsController() {
   }
 
   return {
+    productPickerRef,
+    selectedProductKey: selectedProduct?.productKey ?? null,
     periodOptions: PERIOD_OPTIONS,
     selectedPeriodId,
     periodCaption: PERIOD_CAPTIONS[selectedPeriodId],
@@ -152,6 +188,8 @@ export function useStatisticsController() {
     chartWidth: width - CHART_HORIZONTAL_INSET,
     contentBottomPadding: tabBarHeight + CONTENT_BOTTOM_SPACING,
     handlePeriodChange,
+    handleProductPress,
+    handleProductSelect,
     handleRetry
   };
 }

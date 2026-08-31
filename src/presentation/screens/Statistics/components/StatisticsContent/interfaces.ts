@@ -20,4 +20,5 @@ export interface IStatisticsContentProps {
   hasStatistics: boolean;
   errorMessage: string;
   onRetry: () => void;
+  onProductPress: () => void;
 }

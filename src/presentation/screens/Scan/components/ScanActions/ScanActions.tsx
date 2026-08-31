@@ -1,42 +1,81 @@
 import { Button } from '@presentation/components/Button/Button';
 import { COLORS } from '@shared/constants/colors';
 import { cn } from '@shared/utils/cn';
-import { Flashlight, FlashlightOff } from 'lucide-react-native';
+import type { LucideIcon } from 'lucide-react-native';
+import { Flashlight, FlashlightOff, Images } from 'lucide-react-native';
 import { Pressable, View } from 'react-native';
 import type { IScanActionsProps } from './interfaces';
 
-const TORCH_SIZE = 52;
+const CONTROL_SIZE = 52;
+
+interface IScanControlProps {
+  icon: LucideIcon;
+  label: string;
+  isActive?: boolean;
+  onPress: () => void;
+}
+
+/** Botão redondo dos controles de captura: lanterna e galeria. */
+function ScanControl({
+  icon: Icon,
+  label,
+  isActive = false,
+  onPress
+}: IScanControlProps) {
+  return (
+    <Pressable
+      onPress={onPress}
+      accessibilityRole='button'
+      accessibilityLabel={label}
+      accessibilityState={{ selected: isActive }}
+      className={cn(
+        'items-center justify-center rounded-full border active:opacity-60',
+        isActive ? 'border-brand-main bg-brand-main' : 'border-grays-200 bg-white'
+      )}
+      style={{ width: CONTROL_SIZE, height: CONTROL_SIZE }}
+    >
+      <Icon
+        size={22}
+        color={isActive ? COLORS.white : COLORS.grays[600]}
+        strokeWidth={2}
+      />
+    </Pressable>
+  );
+}
 
 export function ScanActions({
   isTorchVisible,
   isTorchOn,
   onToggleTorchPress,
+  isGalleryVisible,
+  onPickFromGalleryPress,
   primaryAction,
   secondaryActions,
   isPrimaryLoading
 }: IScanActionsProps) {
-  const TorchIcon = isTorchOn ? Flashlight : FlashlightOff;
-
   return (
     <View className='items-center gap-3 px-5 pb-2'>
-      {isTorchVisible && (
-        <Pressable
-          onPress={onToggleTorchPress}
-          accessibilityRole='button'
-          accessibilityLabel={isTorchOn ? 'Desligar lanterna' : 'Ligar lanterna'}
-          accessibilityState={{ selected: isTorchOn }}
-          className={cn(
-            'items-center justify-center rounded-full border active:opacity-60',
-            isTorchOn ? 'border-brand-main bg-brand-main' : 'border-grays-200 bg-white'
+      {/* Lanterna e galeria lado a lado: são as duas formas de melhorar a foto,
+          e empilhá-las como botões de texto encheria o rodapé. */}
+      {(isTorchVisible || isGalleryVisible) && (
+        <View className='flex-row items-center gap-3'>
+          {isTorchVisible && (
+            <ScanControl
+              icon={isTorchOn ? Flashlight : FlashlightOff}
+              label={isTorchOn ? 'Desligar lanterna' : 'Ligar lanterna'}
+              isActive={isTorchOn}
+              onPress={onToggleTorchPress}
+            />
           )}
-          style={{ width: TORCH_SIZE, height: TORCH_SIZE }}
-        >
-          <TorchIcon
-            size={22}
-            color={isTorchOn ? COLORS.white : COLORS.grays[600]}
-            strokeWidth={2}
-          />
-        </Pressable>
+
+          {isGalleryVisible && (
+            <ScanControl
+              icon={Images}
+              label='Escolher uma foto da galeria'
+              onPress={onPickFromGalleryPress}
+            />
+          )}
+        </View>
       )}
 
       <View className='w-full gap-1'>

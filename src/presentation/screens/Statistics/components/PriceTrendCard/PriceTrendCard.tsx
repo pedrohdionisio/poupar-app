@@ -1,5 +1,5 @@
 import { AppText } from '@presentation/components/AppText/AppText';
-import { CHART_LINE } from '@shared/constants/chart';
+import { CHART_AXIS_LABEL_STYLE, CHART_LINE } from '@shared/constants/chart';
 import { COLORS } from '@shared/constants/colors';
 import { Currency } from '@shared/utils/currency';
 import { View } from 'react-native';
@@ -17,12 +17,36 @@ const END_SPACING = 10;
  */
 const RANGE_PADDING_RATIO = 0.4;
 
+/** Uma compra só não é comparação: não há de onde traçar a linha. */
+const MIN_POINTS = 2;
+
 export function PriceTrendCard({
   priceTrend,
   caption,
-  chartWidth
+  chartWidth,
+  onProductPress
 }: IPriceTrendCardProps) {
-  const { productName, prices } = priceTrend;
+  const { productName, points } = priceTrend;
+
+  if (points.length < MIN_POINTS) {
+    return (
+      <ChartCard
+        title={productName}
+        caption={caption}
+        onTitlePress={onProductPress}
+        titleAccessibilityLabel={`Trocar o produto, hoje ${productName}`}
+      >
+        <AppText size='sm' color='muted'>
+          {points.length === 0
+            ? `Você não comprou este item nos ${caption}.`
+            : `Você comprou este item uma vez nos ${caption} — não há com o que comparar o preço.`}{' '}
+          Escolha outro produto no título ou amplie o período.
+        </AppText>
+      </ChartCard>
+    );
+  }
+
+  const prices = points.map(({ price }) => price);
 
   const firstPrice = prices.at(0) ?? 0;
   const currentPrice = prices.at(-1) ?? 0;
@@ -34,18 +58,24 @@ export function PriceTrendCard({
   const minPrice = Math.min(...prices);
   const padding = (maxPrice - minPrice || maxPrice) * RANGE_PADDING_RATIO;
 
-  const data = prices.map((price, index) => ({
+  const data = points.map(({ label, price }, index) => ({
     value: price,
-    hideDataPoint: index !== prices.length - 1,
+    label,
+    hideDataPoint: index !== points.length - 1,
     dataPointColor: lineColor,
     dataPointRadius: CHART_LINE.dotRadius
   }));
 
   const spacing =
-    (chartWidth - INITIAL_SPACING - END_SPACING) / Math.max(prices.length - 1, 1);
+    (chartWidth - INITIAL_SPACING - END_SPACING) / Math.max(points.length - 1, 1);
 
   return (
-    <ChartCard title={productName} caption={caption}>
+    <ChartCard
+      title={productName}
+      caption={caption}
+      onTitlePress={onProductPress}
+      titleAccessibilityLabel={`Trocar o produto, hoje ${productName}`}
+    >
       <LineChart
         data={data}
         width={chartWidth}
@@ -57,10 +87,11 @@ export function PriceTrendCard({
         endSpacing={END_SPACING}
         thickness={CHART_LINE.thickness}
         color={lineColor}
-        hideAxesAndRules
+        hideRules
         hideYAxisText
         yAxisThickness={0}
         xAxisThickness={0}
+        xAxisLabelTextStyle={CHART_AXIS_LABEL_STYLE}
         disableScroll
         adjustToWidth
       />

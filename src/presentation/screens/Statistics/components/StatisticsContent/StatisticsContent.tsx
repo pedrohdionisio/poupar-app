@@ -8,9 +8,6 @@ import { StatisticsEmpty } from '../StatisticsEmpty/StatisticsEmpty';
 import { StatisticsSkeleton } from '../StatisticsSkeleton/StatisticsSkeleton';
 import type { IStatisticsContentProps } from './interfaces';
 
-/** O histórico de preço é vitalício, não recortado pelo filtro de período. */
-const PRICE_TREND_CAPTION = 'histórico';
-
 /** Isola os três estados da tela para o JSX da screen ficar sem ternário aninhado. */
 export function StatisticsContent({
   spendSeries,
@@ -26,7 +23,8 @@ export function StatisticsContent({
   hasError,
   hasStatistics,
   errorMessage,
-  onRetry
+  onRetry,
+  onProductPress
 }: IStatisticsContentProps) {
   if (isLoading) {
     return <StatisticsSkeleton />;
@@ -65,12 +63,15 @@ export function StatisticsContent({
 
       <MerchantSpendCard merchantSpends={merchantSpends} caption={periodCaption} />
 
-      {/* Menos de dois pontos de preço não formam linha. */}
+      {/* `null` só quando a conta ainda não tem produto nenhum: aí não há o que
+          selecionar, e o card não teria nem título. Poucas compras no período
+          é caso do próprio card, que precisa manter o seletor à mão. */}
       {priceTrend && (
         <PriceTrendCard
           priceTrend={priceTrend}
-          caption={PRICE_TREND_CAPTION}
+          caption={periodCaption}
           chartWidth={chartWidth}
+          onProductPress={onProductPress}
         />
       )}
     </View>

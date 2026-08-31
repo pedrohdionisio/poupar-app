@@ -47,8 +47,16 @@ export interface IMerchantSpend {
   amount: number;
 }
 
+export interface IPriceTrendPoint {
+  /** Data da compra no formato do período (`ago.`, `07`, `seg`); vazio quando
+   * o ponto existe mas não é rotulado, para o eixo não embolar. */
+  label: string;
+  /** Preço unitário pago naquela compra. */
+  price: number;
+}
+
 export interface IPriceTrend {
   productName: string;
-  /** Preços em ordem cronológica — o último é o preço atual. */
-  prices: number[];
+  /** Em ordem cronológica — o último é o preço mais recente. */
+  points: IPriceTrendPoint[];
 }

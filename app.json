@@ -35,6 +35,12 @@
           "recordAudioAndroid": false
         }
       ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "O Poupar acessa suas fotos para você escolher a imagem de uma nota fiscal que já está no aparelho."
+        }
+      ],
       "expo-secure-store"
     ]
   }
