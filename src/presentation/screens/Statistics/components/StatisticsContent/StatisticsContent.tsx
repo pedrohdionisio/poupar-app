@@ -1,6 +1,7 @@
 import { ErrorState } from '@presentation/components/ErrorState/ErrorState';
 import { View } from 'react-native';
 import { CategorySplitCard } from '../CategorySplitCard/CategorySplitCard';
+import { CategorySplitError } from '../CategorySplitError/CategorySplitError';
 import { MerchantSpendCard } from '../MerchantSpendCard/MerchantSpendCard';
 import { PriceTrendCard } from '../PriceTrendCard/PriceTrendCard';
 import { SpendTrendCard } from '../SpendTrendCard/SpendTrendCard';
@@ -11,7 +12,11 @@ import type { IStatisticsContentProps } from './interfaces';
 /** Isola os três estados da tela para o JSX da screen ficar sem ternário aninhado. */
 export function StatisticsContent({
   spendSeries,
-  categorySpends,
+  categorySlices,
+  categoryTotalAmount,
+  categoryCaption,
+  hasCategoryError,
+  isRetryingCategory,
   merchantSpends,
   priceTrend,
   totalAmount,
@@ -55,11 +60,24 @@ export function StatisticsContent({
         chartWidth={chartWidth}
       />
 
-      <CategorySplitCard
-        categorySpends={categorySpends}
-        totalAmount={totalAmount}
-        caption={periodCaption}
-      />
+      {hasCategoryError && (
+        <CategorySplitError
+          caption={categoryCaption}
+          isRetrying={isRetryingCategory}
+          onRetry={onRetry}
+        />
+      )}
+
+      {/* Escondido só quando a consulta voltou vazia de verdade: nenhum item do
+          período foi categorizado. As compras podem existir mesmo assim — nota
+          importada antes do agregado de categorias não alimenta essa rota. */}
+      {!hasCategoryError && categorySlices.length > 0 && (
+        <CategorySplitCard
+          categorySlices={categorySlices}
+          totalAmount={categoryTotalAmount}
+          caption={categoryCaption}
+        />
+      )}
 
       <MerchantSpendCard merchantSpends={merchantSpends} caption={periodCaption} />
 

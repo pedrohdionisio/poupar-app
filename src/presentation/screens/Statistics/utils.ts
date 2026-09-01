@@ -1,18 +1,23 @@
+import { getProductCategoryLabel } from '@data/modules/categorySpend/constants/productCategories';
+import type { ICategorySpend } from '@data/modules/categorySpend/types/CategorySpend';
+import type { ProductCategoryType } from '@data/modules/categorySpend/types/CategorySpendTypes';
 import type { IMerchant } from '@data/modules/merchant/types/Merchant';
 import type { IAccountProduct, IPricePoint } from '@data/modules/product/types/Product';
 import type { IPurchase } from '@data/modules/purchase/types/Purchase';
-import type { MerchantCategoryType } from '@data/modules/purchase/types/PurchaseTypes';
 import { DateFormat } from '@shared/utils/date';
 import {
-  CATEGORY_LABELS,
+  CATEGORY_SLICE_LIMIT,
   MERCHANT_SPEND_LIMIT,
+  PERIOD_CAPTIONS,
   PERIOD_CONFIGS,
-  PRICE_TREND_MAX_LABELS
+  PRICE_TREND_MAX_LABELS,
+  REMAINING_CATEGORY_ID
 } from './constants';
 import type {
-  ICategorySpend,
+  ICategorySlice,
   IDateRange,
   IMerchantSpend,
+  IMonthRange,
   IPeriodConfig,
   IPriceTrend,
   ISpendPoint,
@@ -161,20 +166,98 @@ export function getTotalChange(
   return (totalAmount - previousTotal) / previousTotal;
 }
 
-export function buildCategorySpends(purchases: IPurchase[]): ICategorySpend[] {
-  const totals = new Map<MerchantCategoryType, number>();
+/** `2026-08-31` -> `2026-08`, em horário local: o mês do usuário, não o do UTC. */
+function toMonthKey(date: Date): string {
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+}
 
-  for (const { category, totalAmount } of purchases) {
+function fromMonthKey(month: string): Date {
+  const [year, monthNumber] = month.split('-');
+
+  return new Date(Number(year), Number(monthNumber) - 1, 1);
+}
+
+/**
+ * A rota `/category-spends` agrega por mês, então a janela em dias é arredondada
+ * para os meses inteiros que a cobrem — `7 dias` no fim de agosto pede agosto
+ * todo. Quem conserta a legenda desse arredondamento é `getCategoryCaption`.
+ */
+export function getPeriodMonthRange(periodId: TPeriodId, reference: Date): IMonthRange {
+  const config = PERIOD_CONFIGS[periodId];
+
+  const from = shift(startOfUnit(reference, config), config, -(config.bucketCount - 1));
+
+  return { from: toMonthKey(from), to: toMonthKey(reference) };
+}
+
+/** `em agosto` quando a janela cabe num mês; `de março a agosto` quando não. */
+function getMonthRangeCaption(monthRange: IMonthRange): string {
+  const from = DateFormat.toMonth(fromMonthKey(monthRange.from));
+
+  if (monthRange.from === monthRange.to) {
+    return `em ${from}`;
+  }
+
+  return `de ${from} a ${DateFormat.toMonth(fromMonthKey(monthRange.to))}`;
+}
+
+/**
+ * Nos períodos em meses a janela pedida coincide com a do filtro, e o card
+ * repete a legenda dos demais. Nos períodos em dias ela é maior — aí o card
+ * precisa dizer o recorte que de fato tem, ou afirmaria um que não é o seu.
+ */
+export function getCategoryCaption(periodId: TPeriodId, monthRange: IMonthRange): string {
+  if (PERIOD_CONFIGS[periodId].granularity === 'month') {
+    return PERIOD_CAPTIONS[periodId];
+  }
+
+  return getMonthRangeCaption(monthRange);
+}
+
+/**
+ * Soma as linhas mensais numa fatia por categoria e corta no tamanho da paleta:
+ * as maiores ficam nomeadas, o resto vira "Demais categorias". Um donut com 24
+ * fatias não responde "onde meu dinheiro foi" — responde "existem 24 fatias".
+ */
+export function buildCategorySlices(categorySpends: ICategorySpend[]): ICategorySlice[] {
+  const totals = new Map<ProductCategoryType, number>();
+
+  for (const { category, totalAmount } of categorySpends) {
     totals.set(category, (totals.get(category) ?? 0) + totalAmount);
   }
 
-  return [...totals.entries()]
+  const slices = [...totals.entries()]
     .map(([category, amount]) => ({
       id: category,
-      name: CATEGORY_LABELS[category],
+      name: getProductCategoryLabel(category),
       amount
     }))
     .sort((a, b) => b.amount - a.amount);
+
+  if (slices.length <= CATEGORY_SLICE_LIMIT) {
+    return slices;
+  }
+
+  const named = slices.slice(0, CATEGORY_SLICE_LIMIT - 1);
+  const remaining = slices.slice(CATEGORY_SLICE_LIMIT - 1);
+
+  return [
+    ...named,
+    {
+      id: REMAINING_CATEGORY_ID,
+      name: 'Demais categorias',
+      amount: remaining.reduce((total, { amount }) => total + amount, 0)
+    }
+  ];
+}
+
+/**
+ * O total do donut é a soma das próprias fatias, não o total das compras: os
+ * dois divergem quando uma compra entrou sem itens categorizados, e aí os
+ * percentuais da legenda não fechariam 100%.
+ */
+export function getCategoryTotal(categorySlices: ICategorySlice[]): number {
+  return categorySlices.reduce((total, { amount }) => total + amount, 0);
 }
 
 export function buildMerchantSpends(

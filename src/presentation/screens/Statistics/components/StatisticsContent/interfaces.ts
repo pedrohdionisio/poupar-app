@@ -1,5 +1,5 @@
 import type {
-  ICategorySpend,
+  ICategorySlice,
   IMerchantSpend,
   IPriceTrend,
   ISpendPoint
@@ -7,7 +7,11 @@ import type {
 
 export interface IStatisticsContentProps {
   spendSeries: ISpendPoint[];
-  categorySpends: ICategorySpend[];
+  categorySlices: ICategorySlice[];
+  categoryTotalAmount: number;
+  categoryCaption: string;
+  hasCategoryError: boolean;
+  isRetryingCategory: boolean;
   merchantSpends: IMerchantSpend[];
   priceTrend: IPriceTrend | null;
   totalAmount: number;

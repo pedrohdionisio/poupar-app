@@ -56,6 +56,26 @@ function toShortMonth(value: Date | string): string {
   return SHORT_MONTHS[parse(value).getMonth()] ?? '';
 }
 
+const MONTHS = [
+  'janeiro',
+  'fevereiro',
+  'março',
+  'abril',
+  'maio',
+  'junho',
+  'julho',
+  'agosto',
+  'setembro',
+  'outubro',
+  'novembro',
+  'dezembro'
+];
+
+/** `2026-04-27` -> `abril` */
+function toMonth(value: Date | string): string {
+  return MONTHS[parse(value).getMonth()] ?? '';
+}
+
 /** `2026-04-07` -> `07` */
 function toDayOfMonth(value: Date | string): string {
   return String(parse(value).getDate()).padStart(2, '0');
@@ -128,6 +148,7 @@ export const DateFormat = {
   toDayMonthYear,
   toWeekday,
   toShortMonth,
+  toMonth,
   toDayOfMonth,
   maskDayMonthYear,
   isValidDayMonthYear,

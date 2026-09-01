@@ -12,11 +12,11 @@ const RADIUS = 62;
 const INNER_RADIUS = 44;
 
 export function CategorySplitCard({
-  categorySpends,
+  categorySlices,
   totalAmount,
   caption
 }: ICategorySplitCardProps) {
-  const data = categorySpends.map(({ id, amount }, index) => ({
+  const data = categorySlices.map(({ id, amount }, index) => ({
     key: id,
     value: amount,
     color: CHART_PALETTE[index % CHART_PALETTE.length]
@@ -45,7 +45,7 @@ export function CategorySplitCard({
         />
 
         <View className='flex-1 gap-2.5'>
-          {categorySpends.map(({ id, name, amount }, index) => (
+          {categorySlices.map(({ id, name, amount }, index) => (
             <CategoryLegendItem
               key={id}
               name={name}

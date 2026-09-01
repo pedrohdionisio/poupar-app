@@ -1,8 +1,9 @@
-import type { ICategorySpend } from '../../interfaces';
+import type { ICategorySlice } from '../../interfaces';
 
 export interface ICategorySplitCardProps {
   /** Já ordenadas da maior para a menor: a paleta é consumida nessa ordem. */
-  categorySpends: ICategorySpend[];
+  categorySlices: ICategorySlice[];
+  /** Soma das fatias — não o total das compras, que inclui item sem categoria. */
   totalAmount: number;
   caption: string;
 }

@@ -13,7 +13,11 @@ export function Statistics() {
     selectedPeriodId,
     periodCaption,
     spendSeries,
-    categorySpends,
+    categorySlices,
+    categoryTotalAmount,
+    categoryCaption,
+    hasCategoryError,
+    isRetryingCategory,
     merchantSpends,
     priceTrend,
     totalAmount,
@@ -50,7 +54,11 @@ export function Statistics() {
 
         <StatisticsContent
           spendSeries={spendSeries}
-          categorySpends={categorySpends}
+          categorySlices={categorySlices}
+          categoryTotalAmount={categoryTotalAmount}
+          categoryCaption={categoryCaption}
+          hasCategoryError={hasCategoryError}
+          isRetryingCategory={isRetryingCategory}
           merchantSpends={merchantSpends}
           priceTrend={priceTrend}
           totalAmount={totalAmount}

@@ -35,7 +35,14 @@ export interface ISpendPoint {
   amount: number;
 }
 
-export interface ICategorySpend {
+/** Janela em meses inteiros, formato `YYYY-MM` — o que a rota de categorias aceita. */
+export interface IMonthRange {
+  from: string;
+  to: string;
+}
+
+/** Uma fatia do donut de categorias, já com o rótulo em pt-BR. */
+export interface ICategorySlice {
   id: string;
   name: string;
   amount: number;

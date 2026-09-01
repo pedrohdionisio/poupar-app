@@ -1,4 +1,3 @@
-import type { MerchantCategoryType } from '@data/modules/purchase/types/PurchaseTypes';
 import type { IPeriodConfig, IPeriodOption, TPeriodId } from './interfaces';
 
 /** Ordem das pills do filtro, do período mais curto para o mais longo. */
@@ -38,11 +37,17 @@ export const PERIOD_CONFIGS: Record<TPeriodId, IPeriodConfig> = {
   '1a': { bucketCount: 12, granularity: 'month', labelKind: 'month', labelEvery: 1 }
 };
 
-/** A API só tem estas duas categorias (`Merchant.Category`). */
-export const CATEGORY_LABELS: Record<MerchantCategoryType, string> = {
-  SUPERMARKET: 'Supermercado',
-  OTHER: 'Outros'
-};
+/**
+ * Quantas fatias o donut de categorias desenha. São 24 categorias na API e 5
+ * cores na paleta: as maiores ficam nomeadas e o resto vira uma fatia só.
+ */
+export const CATEGORY_SLICE_LIMIT = 5;
+
+/**
+ * Id da fatia que junta o que sobrou do corte. Não pode ser `OTHER`: essa é uma
+ * categoria de verdade da API, com rótulo próprio.
+ */
+export const REMAINING_CATEGORY_ID = 'REMAINING';
 
 /** Quantas barras cabem no card de "onde você mais gasta". */
 export const MERCHANT_SPEND_LIMIT = 5;

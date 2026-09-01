@@ -1,3 +1,4 @@
+import { useListCategorySpends } from '@data/modules/categorySpend/useCases/listCategorySpends/useListCategorySpends';
 import { useListMerchants } from '@data/modules/merchant/useCases/listMerchants/useListMerchants';
 import type { IAccountProduct } from '@data/modules/product/types/Product';
 import { useListAccountProducts } from '@data/modules/product/useCases/listAccountProducts/useListAccountProducts';
@@ -12,11 +13,14 @@ import type { IProductPickerBottomSheet } from './components/ProductPickerBottom
 import { DEFAULT_PERIOD_ID, PERIOD_CAPTIONS, PERIOD_OPTIONS } from './constants';
 import type { TPeriodId } from './interfaces';
 import {
-  buildCategorySpends,
+  buildCategorySlices,
   buildMerchantSpends,
   buildPriceTrend,
   buildSpendSeries,
+  getCategoryCaption,
+  getCategoryTotal,
   getMostPurchasedProduct,
+  getPeriodMonthRange,
   getPeriodRange,
   getPreviousPeriodRange,
   getTotalAmount,
@@ -52,6 +56,7 @@ export function useStatisticsController() {
    */
   const range = getPeriodRange(selectedPeriodId, new Date());
   const previousRange = getPreviousPeriodRange(selectedPeriodId, new Date());
+  const monthRange = getPeriodMonthRange(selectedPeriodId, new Date());
 
   const {
     purchases,
@@ -68,6 +73,13 @@ export function useStatisticsController() {
     isLoadingPurchases: isLoadingPreviousPurchases,
     hasPurchasesError: hasPreviousPurchasesError
   } = useListPurchases(previousRange);
+
+  const {
+    categorySpends,
+    loadCategorySpends,
+    isRefetchingCategorySpends,
+    hasCategorySpendsError
+  } = useListCategorySpends(monthRange);
 
   const { merchants, loadMerchants } = useListMerchants();
 
@@ -117,9 +129,14 @@ export function useStatisticsController() {
     hasPreviousPurchasesError
   ]);
 
-  const categorySpends = useMemo(
-    () => buildCategorySpends(periodPurchases),
-    [periodPurchases]
+  const categorySlices = useMemo(
+    () => buildCategorySlices(categorySpends ?? []),
+    [categorySpends]
+  );
+
+  const categoryTotalAmount = useMemo(
+    () => getCategoryTotal(categorySlices),
+    [categorySlices]
   );
 
   const merchantSpends = useMemo(
@@ -156,12 +173,14 @@ export function useStatisticsController() {
   }
 
   /**
-   * As cinco consultas voltam juntas: retentar só a principal deixaria o selo de
-   * variação e os apelidos das barras quebrados depois de um erro de rede.
+   * As seis consultas voltam juntas: retentar só a principal deixaria o selo de
+   * variação, o donut de categorias e os apelidos das barras quebrados depois de
+   * um erro de rede.
    */
   function handleRetry() {
     loadPurchases();
     loadPreviousPurchases();
+    loadCategorySpends();
     loadMerchants();
     loadProducts();
     loadPricePoints();
@@ -174,7 +193,11 @@ export function useStatisticsController() {
     selectedPeriodId,
     periodCaption: PERIOD_CAPTIONS[selectedPeriodId],
     spendSeries,
-    categorySpends,
+    categorySlices,
+    categoryTotalAmount,
+    categoryCaption: getCategoryCaption(selectedPeriodId, monthRange),
+    hasCategoryError: hasCategorySpendsError,
+    isRetryingCategory: isRefetchingCategorySpends,
     merchantSpends,
     priceTrend,
     totalAmount,
