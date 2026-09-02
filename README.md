@@ -20,7 +20,8 @@ irmão.
 </p>
 
 <p align="center">
-  <img src="docs/screenshots/scan.gif" width="30%" alt="Fluxo de scan de cupom fiscal" />
+  <img src="docs/screenshots/scan-camera.png" width="30%" alt="Passo de captura do cupom fiscal" />
+  <img src="docs/screenshots/scan-processing.png" width="30%" alt="Passo de extração dos itens do cupom" />
   <br />
   <em>Do cupom fiscal à compra estruturada: estabelecimento, foto, extração e revisão.</em>
 </p>

@@ -20,7 +20,8 @@ repository.
 </p>
 
 <p align="center">
-  <img src="docs/screenshots/scan.gif" width="30%" alt="Receipt scan flow" />
+  <img src="docs/screenshots/scan-camera.png" width="30%" alt="Receipt capture step" />
+  <img src="docs/screenshots/scan-processing.png" width="30%" alt="Receipt item extraction step" />
   <br />
   <em>From receipt to structured purchase: merchant, photo, extraction and review.</em>
 </p>
