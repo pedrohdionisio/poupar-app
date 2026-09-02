@@ -11,8 +11,25 @@ irmão.
 
 ---
 
+## Preview
+
+<p align="center">
+  <img src="docs/screenshots/login.jpg" width="30%" alt="Tela de login" />
+  <img src="docs/screenshots/receipts.png" width="30%" alt="Lista de recibos" />
+  <img src="docs/screenshots/statistics.png" width="30%" alt="Tela de estatísticas" />
+</p>
+
+<p align="center">
+  <img src="docs/screenshots/scan.gif" width="30%" alt="Fluxo de scan de cupom fiscal" />
+  <br />
+  <em>Do cupom fiscal à compra estruturada: estabelecimento, foto, extração e revisão.</em>
+</p>
+
+---
+
 ## Sumário
 
+- [Preview](#preview)
 - [Principais funcionalidades](#principais-funcionalidades)
 - [Stack](#stack)
 - [Arquitetura](#arquitetura)

@@ -11,8 +11,25 @@ repository.
 
 ---
 
+## Preview
+
+<p align="center">
+  <img src="docs/screenshots/login.jpg" width="30%" alt="Login screen" />
+  <img src="docs/screenshots/receipts.png" width="30%" alt="Receipts list" />
+  <img src="docs/screenshots/statistics.png" width="30%" alt="Statistics screen" />
+</p>
+
+<p align="center">
+  <img src="docs/screenshots/scan.gif" width="30%" alt="Receipt scan flow" />
+  <br />
+  <em>From receipt to structured purchase: merchant, photo, extraction and review.</em>
+</p>
+
+---
+
 ## Table of contents
 
+- [Preview](#preview)
 - [Features](#features)
 - [Stack](#stack)
 - [Architecture](#architecture)
